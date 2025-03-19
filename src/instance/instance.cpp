@@ -66,7 +66,7 @@ Map::Map() {
 void Map::load_places(string filename) {
     // Load places from file
     ifstream file(filename);
-    place p;
+    place p(0, "", {0, 0}, "");
     file >> p.id >> p.name >> p.location.x >> p.location.y >> p.type;
     places.push_back(p);
     file.close();
