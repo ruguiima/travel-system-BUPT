@@ -1,9 +1,9 @@
 # 数据的连接
 ## 代码文件中连接
 ```c++
-	//创建mysql数据库对象
-	QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-	//本地localhost,远程填ip地址
+    //创建mysql数据库对象
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+    //本地localhost,远程填ip地址
     db.setHostName("bigblue");
     //指定连接的数据库的名称
     db.setDatabaseName("flightdb");
@@ -50,14 +50,14 @@ QString user = settings.value("Database/user").toString(); QString password = se
 - 只读
 - 数据行以索引形式读取
 ```c++
-	QSqlQueryModel model;
-	//读取employee表的全部数据，employee改成需要的表名即可
+    QSqlQueryModel model;
+    //读取employee表的全部数据，employee改成需要的表名即可
     model.setQuery("SELECT * FROM employee");
 
-	//索引读取
+   //索引读取
     for (int i = 0; i < model.rowCount(); ++i) {
-	    //record(int index)方法获取对应行
-	    //value("字段名")获取对应数据
+        //record(int index)方法获取对应行
+        //value("字段名")获取对应数据
         int id = model.record(i).value("id").toInt();
         QString name = model.record(i).value("name").toString();
         qDebug() << id << name;
@@ -73,14 +73,14 @@ QString user = settings.value("Database/user").toString(); QString password = se
 - 可读写
 - 读取类似QSqlQueryModel，不需要修改数据的时候没必要使用
 ```c++
-	QSqlTableModel model;
-	//需要进行sql语句的拆分设置
+    QSqlTableModel model;
+    //需要进行sql语句的拆分设置
     model.setTable("employee");
     model.setFilter("salary > 50000");
     model.setSort(2, Qt::DescendingOrder);
     model.select();
 
-	//读取类似QSqlQueryModel
+    //读取类似QSqlQueryModel
     for (int i = 0; i < model.rowCount(); ++i) {
         QString name = model.record(i).value("name").toString();
         int salary = model.record(i).value("salary").toInt();
@@ -88,10 +88,10 @@ QString user = settings.value("Database/user").toString(); QString password = se
     }
 
 
-	//改
-	//设置数据setRecord，setValue方法
-	for (int i = 0; i < model.rowCount(); ++i) {
-		//QSqlRecord记录行数据
+    //改
+    //设置数据setRecord，setValue方法
+    for (int i = 0; i < model.rowCount(); ++i) {
+        //QSqlRecord记录行数据
         QSqlRecord record = model.record(i);
         double salary = record.value("salary").toInt();
         salary *= 1.1;
@@ -113,7 +113,7 @@ QString user = settings.value("Database/user").toString(); QString password = se
 	model.removeRows(row, 5)
 
 
-	//将数据变化提交给数据库
+    //将数据变化提交给数据库
     model.submitAll();
 ```
 - submitAll() 的使用受编辑策略影响
