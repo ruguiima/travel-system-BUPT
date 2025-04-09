@@ -1,6 +1,9 @@
-Di#include "mainwindow.h"
+#include "mainwindow.h"
 
 #include <QApplication>
+#include <QSqlDatabase>
+#include <QDebug>
+
 
 int main(int argc, char *argv[])
 {
