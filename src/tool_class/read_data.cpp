@@ -30,6 +30,8 @@ std::vector<diary> read_data::read_diary_data(){
         d.score = model.record(i).value("score").toFloat();
         d.score_number = model.record(i).value("score_number").toInt();
         d.image_path = model.record(i).value("image_path").toString().toStdString();
+        if(d.author == 0)
+            d.author_name = "佚名";
         diarys.push_back(d);
     }
     return diarys;
@@ -38,17 +40,18 @@ std::vector<diary> read_data::read_diary_data(){
 std::vector<location> read_data::read_location_data(){
     std::vector<location> locations;
     QSqlQueryModel model;
-    model.setQuery("Select * From Diary");
+    model.setQuery("Select * From Location");
     for(int i = 0;i < model.rowCount();i++){
         location d;
         d.id = model.record(i).value("id").toInt();
-        d.title = model.record(i).value("title").toString().toStdString();
-        d.type = model.record(i).value("tyep").toInt();
+        d.title = model.record(i).value("name").toString().toStdString();
+        // qDebug() << d.title;
+        d.type = model.record(i).value("type").toInt();
         d.popularity = model.record(i).value("popularity").toInt();
         d.score = model.record(i).value("score").toFloat();
         d.score_number = model.record(i).value("score_number").toInt();
-        d.image_path = model.record(i).value("image_path").toString().toStdString();
         locations.push_back(d);
     }
     return locations;
 }
+
