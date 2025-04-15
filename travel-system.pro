@@ -16,7 +16,6 @@ SOURCES += \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tool_class/read_data.cpp \
-    src/tool_class/update_database.cpp \
     src/writewidget.cpp
 
 HEADERS += \
@@ -28,8 +27,7 @@ HEADERS += \
     include/tool_class/read_data.h \
     include/writewidget.h \
     include/diaryread.h \
-    include/location_choose.h \
-    include/tool_class/update_database.h
+    include/location_choose.h
 
 FORMS += \
     ui/diaryread.ui \
