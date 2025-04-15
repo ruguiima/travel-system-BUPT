@@ -15,6 +15,11 @@ public:
     explicit writewidget(QWidget *parent = nullptr, QString site = nullptr);
     ~writewidget();
 
+signals:
+    void closewidget();
+private slots:
+    void on_close_clicked();
+
 private:
     Ui::writewidget *ui;
     QString site;

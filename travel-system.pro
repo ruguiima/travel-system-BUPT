@@ -10,7 +10,9 @@ CONFIG += c++17
 
 SOURCES += \
     src/database_connection.cpp \
+    src/diaryread.cpp \
     src/diarywindow.cpp \
+    src/location_choose.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
     src/tool_class/read_data.cpp \
@@ -23,9 +25,13 @@ HEADERS += \
     include/simple_class/diary.h \
     include/simple_class/location.h \
     include/tool_class/read_data.h \
-    include/writewidget.h
+    include/writewidget.h \
+    include/diaryread.h \
+    include/location_choose.h
 
 FORMS += \
+    ui/diaryread.ui \
+    ui/location_choose.ui \
     ui/diarywindow.ui \
     ui/mainwindow.ui \
     ui/writewidget.ui
