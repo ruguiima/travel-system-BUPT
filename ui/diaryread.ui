@@ -198,7 +198,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>0</x>
      <y>80</y>
      <width>341</width>
-     <height>191</height>
+     <height>221</height>
     </rect>
    </property>
    <property name="widgetResizable">
@@ -210,21 +210,34 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <x>0</x>
       <y>0</y>
       <width>339</width>
-      <height>189</height>
+      <height>219</height>
      </rect>
     </property>
-    <widget class="QLabel" name="context">
+    <widget class="QWidget" name="verticalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>311</width>
-       <height>141</height>
+       <x>0</x>
+       <y>-1</y>
+       <width>341</width>
+       <height>221</height>
       </rect>
      </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="context">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="image">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

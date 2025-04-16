@@ -18,7 +18,7 @@ public:
     ~location_choose();
 
 signals:
-    void location_pass(const QString &l);
+    void location_pass(const QString &l, const int id);
 private:
     Ui::location_choose *ui;
     std::vector<location> locations;

@@ -7,15 +7,18 @@ location_choose::location_choose(std::vector<location> locations, QWidget *paren
 {
     this->locations = locations;
     ui->setupUi(this);
-    for(location l : locations)
-        ui->location_choose_box->addItem(QString::fromStdString(l.title));
+    for(location l : locations){
+        ui->location_choose_box->addItem(QString::number(l.id) + " "+ QString::fromStdString(l.title));
+    }
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, [=]() {
         // 获取选中的参数并传递给主窗口
-        emit location_pass(ui->location_choose_box->currentText());
+        int kong = 0;
+        QString str = ui->location_choose_box->currentText();
+        kong = str.indexOf(" ");
+        emit location_pass(str.mid(kong+1), str.mid(0,kong).toInt());
         accept();
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
     setWindowTitle("选择要写旅游日记的景点");
     });
 }

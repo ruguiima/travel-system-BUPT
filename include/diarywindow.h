@@ -33,7 +33,7 @@ public:
 
 private slots:
     void on_writediary_clicked();
-    void open_write_widget(const QString l);
+    void open_write_widget(const QString l, const int id);
     void choose_sort_model();
 
     void on_sitesearch_clicked();

@@ -22,6 +22,14 @@ diarywindow::~diarywindow()
     delete ui;
 }
 
+
+void diarywindow::on_diaryslist_itemActivated(QListWidgetItem *item)          //日记查看窗口
+{
+    diaryread *dr = new diaryread(item->data(Qt::UserRole).value<diary>());
+    connect(dr, &diaryread::closewidget, this, &diarywindow::show);
+    dr->show();
+}
+
 void diarywindow::on_writediary_clicked()            //进入写日志窗口
 {
     location_choose_widget = new location_choose(locations);
@@ -30,14 +38,14 @@ void diarywindow::on_writediary_clicked()            //进入写日志窗口
     location_choose_widget->exec();
 }
 
-void diarywindow::open_write_widget(const QString l){
-    write_widget = new writewidget(nullptr, l);
+void diarywindow::open_write_widget(const QString l, const int id){
+    write_widget = new writewidget(nullptr, l, id);
     connect(write_widget, &writewidget::closewidget, this, &diarywindow::show);
     write_widget->show();
     this->hide();
 }
 
-void diarywindow::choose_sort_model(){
+void diarywindow::choose_sort_model(){             //排序方法选择
     int k;
     QString str =button_grooup->checkedButton()->text();
 
@@ -74,7 +82,7 @@ std::vector<diary> diarywindow::search_site(const std::string str, std::vector<d
 }
 
 
-void diarywindow::show_diary(std::vector<diary> diarys)
+void diarywindow::show_diary(std::vector<diary> diarys)             //日记列表初始化
 {
     ui->diaryslist->clear();
     // QVBoxLayout *layout = new QVBoxLayout(ui->diaryslist);
@@ -104,9 +112,4 @@ void diarywindow::on_titlesearch_clicked()
 }
 
 
-void diarywindow::on_diaryslist_itemActivated(QListWidgetItem *item)
-{
-    diaryread *dr = new diaryread(item->data(Qt::UserRole).value<diary>());
-    dr->show();
-}
 

@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "./simple_class/diary.h"
 #include <QButtonGroup>
+#include "./tool_class/update_database.h"
+#include <QPixmap>
 
 namespace Ui {
 class diaryread;
@@ -18,6 +20,12 @@ public:
     void diary_data_change();
     void diary_score_change(int number);
     ~diaryread();
+
+signals:
+    void closewidget();
+
+private slots:
+    void on_close_botton_clicked();
 
 private:
     Ui::diaryread *ui;

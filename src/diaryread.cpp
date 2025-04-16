@@ -20,18 +20,34 @@ diaryread::diaryread(diary info, QWidget *parent)
     button_group->addButton(ui->score3);
     button_group->addButton(ui->score4);
     button_group->addButton(ui->score5);
+    ui->context->setWordWrap(true);
+    ui->image->setWordWrap(true);
+    ui->scrollArea->setWidgetResizable(true);
+    if(info.image_path.compare("0")){
+        qDebug() << "图片输出" ;
+        QPixmap px(QString::fromStdString(info.image_path));
+        QPixmap scaledImage = px.scaled(341, 221, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        ui->image->setPixmap(scaledImage);
+        ui->image->setFixedSize(px.size());
+    }
+    else
+        ui->image->hide();
 }
 
 diaryread::~diaryread()
 {
-    diary_score_change((button_group->checkedButton()->text()).toInt());
+    if(button_group->checkedButton() != nullptr)
+        diary_score_change((button_group->checkedButton()->text()).toInt());
     diary_data_change();
+    emit closewidget();
     delete ui;
 }
 
+
 void diaryread::diary_data_change()
 {
-
+    update_database ud(info);
+    ud.change_data();
 }
 
 void diaryread::diary_score_change(int number)
@@ -41,3 +57,9 @@ void diaryread::diary_score_change(int number)
     ans += number;
     this->info.score = ans / this->info.score_number;
 }
+
+void diaryread::on_close_botton_clicked()
+{
+    diaryread::~diaryread();
+}
+
