@@ -20,8 +20,8 @@ namespace std {
 
 using namespace std;
 
-void route_plan::load() {
-    QFile file("./data/map_of_bupt.geojson");
+void route_plan::load(QString file_path) {
+    QFile file(file_path);
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open file";
         return;
@@ -84,10 +84,14 @@ void road::calcu_leng() {
 }
 
 void route_plan::create_graph() {
+
     unordered_map<coor, int> coor_to_id;
     for (int i = 0; i < places.size(); ++i) {
         coor_to_id[places[i].getLoct()] = i;
     }
+    graph_d.resize(places.size());
+    graph_t.resize(places.size());
+    graph_m.resize(places.size());
     for (const auto &road : roads) {
         int start_id = coor_to_id[road.getStart()];
         int end_id = coor_to_id[road.getEnd()];

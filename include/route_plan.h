@@ -41,6 +41,7 @@ class place_info {
 public:
     place_info(int id, double weight, road_type type)
         : id(id), weight(weight), type(type) {}
+    place_info() = default;
     int getId() const { return id; }
     double getWeight() const { return weight; }
     road_type getType() const { return type; }
@@ -53,7 +54,7 @@ private:
 
 class route_plan {
 public:
-    void load();
+    void load(QString file_path);
     void create_graph();
 private:
     std::vector<place> places;
