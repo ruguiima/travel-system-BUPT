@@ -2,6 +2,7 @@
 #define WRITEWIDGET_H
 
 #include <QWidget>
+#include "simple_class/user.h"
 #include "./tool_class/update_database.h"
 #include <QFile>
 #include <QFileDialog>
@@ -18,7 +19,7 @@ class writewidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit writewidget(QWidget *parent = nullptr, QString site = nullptr, int site_id = 0);
+    explicit writewidget(user u, QWidget *parent = nullptr, QString site = nullptr, int site_id = 0);
     ~writewidget();
 
 signals:
@@ -33,6 +34,7 @@ private slots:
 private:
     Ui::writewidget *ui;
     QString site;
+    user u;
     diary d;
 };
 

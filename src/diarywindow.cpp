@@ -2,11 +2,13 @@
 #include "ui_diarywindow.h"
 #include "tool_class/read_data.h"
 
-diarywindow::diarywindow(QWidget *parent)
+diarywindow::diarywindow(user u, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::diarywindow),write_widget()
 {
     ui->setupUi(this);
+    this->u = u;
+    // qDebug() << "当前登录用户为：" << u.account;
     button_grooup = new QButtonGroup(this);
     button_grooup->addButton(ui->scoreorder);
     button_grooup->addButton(ui->popularityorder);
@@ -20,6 +22,7 @@ diarywindow::diarywindow(QWidget *parent)
 diarywindow::~diarywindow()
 {
     delete ui;
+    emit windowclose();
 }
 
 
@@ -39,7 +42,7 @@ void diarywindow::on_writediary_clicked()            //进入写日志窗口
 }
 
 void diarywindow::open_write_widget(const QString l, const int id){
-    write_widget = new writewidget(nullptr, l, id);
+    write_widget = new writewidget(u, nullptr, l, id);
     connect(write_widget, &writewidget::closewidget, this, &diarywindow::show);
     write_widget->show();
     this->hide();

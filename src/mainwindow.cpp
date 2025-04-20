@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(user u, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->u = u;
 }
 
 MainWindow::~MainWindow()
@@ -17,6 +17,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_diary_widget_clicked()
 {
     this->hide();
-    diary_window.show();
+    diary_window = new diarywindow(u);
+    connect(diary_window, &diarywindow::windowclose, this, &MainWindow::show);
+    diary_window->show();
 }
 

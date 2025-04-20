@@ -15,6 +15,7 @@ SOURCES += \
     src/location_choose.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/login_widget.cpp \
     src/tool_class/read_data.cpp \
     src/tool_class/update_database.cpp \
     src/writewidget.cpp
@@ -25,13 +26,16 @@ HEADERS += \
     include/mainwindow.h \
     include/simple_class/diary.h \
     include/simple_class/location.h \
+    include/simple_class/user.h \
     include/tool_class/read_data.h \
     include/writewidget.h \
     include/diaryread.h \
     include/location_choose.h \
-    include/tool_class/update_database.h
+    include/tool_class/update_database.h \
+    include/login_widget.h
 
 FORMS += \
+    ui/login_widget.ui \
     ui/diaryread.ui \
     ui/location_choose.ui \
     ui/diarywindow.ui \

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "diarywindow.h"
+#include "simple_class/user.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -14,7 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(user u, QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -22,6 +23,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    diarywindow diary_window;
+    user u;
+    diarywindow *diary_window;
 };
 #endif // MAINWINDOW_H

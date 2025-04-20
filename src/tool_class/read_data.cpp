@@ -1,5 +1,4 @@
 #include "tool_class/read_data.h"
-#include "database_connection.h"
 
 read_data::read_data() {
     db = database_connection::getInstance().get_data_base();
@@ -55,3 +54,21 @@ std::vector<location> read_data::read_location_data(){
     return locations;
 }
 
+user read_data::read_user_data(QString account){
+    user u;
+    QSqlTableModel model;
+    model.setTable("User");
+    model.setFilter(QString("account = '%1'").arg(account));
+    model.select();
+    if(model.rowCount() == 0){
+        qDebug() << "未搜到用户";
+        u.id = 0;
+        return u;
+    }
+    qDebug() << "搜到用户";
+    QSqlRecord record = model.record(0);
+    u.id = record.value("id").toInt();
+    u.account = record.value("account").toString().toStdString();
+    u.password = record.value("password").toString().toStdString();
+    return u;
+}

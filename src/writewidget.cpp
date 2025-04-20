@@ -1,12 +1,13 @@
 #include "writewidget.h"
 #include "ui_writewidget.h"
 
-writewidget::writewidget(QWidget *parent, QString site, int site_id)
+writewidget::writewidget(user u, QWidget *parent, QString site, int site_id)
     : QWidget(parent)
     , ui(new Ui::writewidget)
 {
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
+    this->u = u;
     this->site = site;
     this->d.site_id = site_id;
     this->d.image_path = "0";
@@ -29,7 +30,7 @@ void writewidget::on_close_clicked()
 void writewidget::on_finisharticle_clicked()
 {
     d.id = -1;
-    d.author = 0;
+    d.author = u.id;
     d.context = ui->textEdit->toPlainText().toStdString();
     d.title = ui->title->toPlainText().toStdString();
     update_database ud(d);

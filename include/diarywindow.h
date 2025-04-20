@@ -5,6 +5,7 @@
 #include "location_choose.h"
 #include "diaryread.h"
 #include <QButtonGroup>
+#include "simple_class/user.h"
 #include <vector>
 #include <QtSql/QSqlDatabase>
 #include <QTableView>
@@ -25,11 +26,14 @@ class diarywindow : public QWidget
 public:
     std::vector<diary> diarys;
     std::vector<location> locations;
-    explicit diarywindow(QWidget *parent = nullptr);
+    explicit diarywindow(user u, QWidget *parent = nullptr);
     ~diarywindow();
     void show_diary(std::vector<diary> diarys);
     std::vector<diary> search_title(const std::string str, std::vector<diary> diarys);
     std::vector<diary> search_site(const std::string str, std::vector<diary> diarys, std::vector<location> locations);
+
+signals:
+    void windowclose();
 
 private slots:
     void on_writediary_clicked();
@@ -44,6 +48,7 @@ private slots:
 
 private:
     Ui::diarywindow *ui;
+    user u;
     QButtonGroup *button_grooup;
     writewidget *write_widget;
     location_choose *location_choose_widget;
