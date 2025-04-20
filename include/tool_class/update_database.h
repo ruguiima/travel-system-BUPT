@@ -4,10 +4,10 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQueryModel>
 #include <QtSql/QSqlTableModel>
-#include <QSqlError>
+#include <QtSql/QSqlError>
 #include <QtSql/QSqlRecord>
-#include "../simple_class/diary.h"
-#include "../database_connection.h"
+#include "simple_class/diary.h"
+#include "database_connection.h"
 
 class update_database
 {

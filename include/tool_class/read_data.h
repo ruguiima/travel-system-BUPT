@@ -4,11 +4,11 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQueryModel>
 #include <QtSql/QSqlRecord>
-#include "../simple_class/diary.h"
-#include "../simple_class/location.h"
+#include "simple_class/diary.h"
+#include "simple_class/location.h"
 #include "simple_class/user.h"
 #include "database_connection.h"
-#include <QSqlTableModel>
+#include <QtSql/QSqlTableModel>
 #include <vector>
 
 class read_data

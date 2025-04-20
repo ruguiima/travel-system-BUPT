@@ -1,4 +1,4 @@
-#include "include/tool_class/update_database.h"
+#include "tool_class/update_database.h"
 
 update_database::update_database(diary d) {
     this->d = d;

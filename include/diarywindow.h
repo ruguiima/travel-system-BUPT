@@ -11,8 +11,8 @@
 #include <QTableView>
 #include <QListWidgetItem>
 #include "writewidget.h"
-#include "./simple_class/diary.h"
-#include "./simple_class/location.h"
+#include "simple_class/diary.h"
+#include "simple_class/location.h"
 #include <QVBoxLayout>
 
 namespace Ui {

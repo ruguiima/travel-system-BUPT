@@ -2,7 +2,7 @@
 #include "login_widget.h"
 #include "simple_class/user.h"
 #include <QApplication>
-#include <QSqlDatabase>
+#include <QtSql/QSqlDatabase>
 #include <QDebug>
 
 

@@ -1,5 +1,7 @@
-#include "topKAlgorithm.h"
-#include "tool_class/read_data.h"  // 确保包含数据库数据结构定义
+#include "top_k_algorithm.h"
+#include "tool_class/read_data.h"
+#include "simple_class/diary.h"
+#include "simple_class/location.h"  // 确保包含数据库数据结构定义
 
 // 综合评分计算函数实现
 template<typename T>
@@ -46,7 +48,7 @@ std::vector<T> topKAlgorithm<T, criteria>::getTopK(const std::vector<T>& items, 
 }
 
 // 显式实例化模板（使用数据库中的实际数据结构）
-template class topKAlgorithm<Location, byHeat>;
-template class topKAlgorithm<Location, byScore>;
-template class topKAlgorithm<Diary, byHeat>;
-template class topKAlgorithm<Diary, byScore>;
+template class topKAlgorithm<location, byHeat>;
+template class topKAlgorithm<location, byScore>;
+template class topKAlgorithm<diary, byHeat>;
+template class topKAlgorithm<diary, byScore>;

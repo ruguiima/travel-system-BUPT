@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.compilerPath": "D:/mingw64/mingw64/bin/g++.exe",
+    "C_Cpp.default.compilerPath": "D:\\QT\\Tools\\mingw1310_64\\bin\\g++.exe",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
@@ -58,6 +58,18 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "qwidget": "cpp"
+        "qwidget": "cpp",
+        "qsqlquerymodel": "cpp",
+        "qsqlrecord": "cpp",
+        "qbuttongroup": "cpp",
+        "qpixmap": "cpp",
+        "qstring": "cpp",
+        "qvboxlayout": "cpp",
+        "qsqldatabase": "cpp",
+        "qtableview": "cpp",
+        "qlistwidgetitem": "cpp",
+        "qdialog": "cpp",
+        "qmessagebox": "cpp",
+        "qmainwindow": "cpp"
     }
 }

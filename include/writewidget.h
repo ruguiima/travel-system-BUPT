@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "simple_class/user.h"
-#include "./tool_class/update_database.h"
+#include "tool_class/update_database.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QDir>

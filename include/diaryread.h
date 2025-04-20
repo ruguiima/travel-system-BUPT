@@ -2,9 +2,9 @@
 #define DIARYREAD_H
 
 #include <QWidget>
-#include "./simple_class/diary.h"
+#include "simple_class/diary.h"
 #include <QButtonGroup>
-#include "./tool_class/update_database.h"
+#include "tool_class/update_database.h"
 #include <QPixmap>
 
 namespace Ui {
