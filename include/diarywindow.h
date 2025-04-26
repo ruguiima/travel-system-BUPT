@@ -6,6 +6,7 @@
 #include "diaryread.h"
 #include <QButtonGroup>
 #include "simple_class/user.h"
+#include "top_k_algorithm.h"
 #include <vector>
 #include <QtSql/QSqlDatabase>
 #include <QTableView>
@@ -25,6 +26,7 @@ class diarywindow : public QWidget
 
 public:
     std::vector<diary> diarys;
+    std::vector<diary> diarylist;
     std::vector<location> locations;
     explicit diarywindow(user u, QWidget *parent = nullptr);
     ~diarywindow();
@@ -45,6 +47,8 @@ private slots:
     void on_titlesearch_clicked();
 
     void on_diaryslist_itemActivated(QListWidgetItem *item);
+
+    void on_refresh_clicked();
 
 private:
     Ui::diarywindow *ui;

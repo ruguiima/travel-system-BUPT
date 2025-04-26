@@ -18,7 +18,8 @@ SOURCES += \
     src/login_widget.cpp \
     src/tool_class/read_data.cpp \
     src/tool_class/update_database.cpp \
-    src/writewidget.cpp
+    src/writewidget.cpp \
+    src/top_k_algorithm.cpp
 
 HEADERS += \
     include/database_connection.h \
@@ -32,7 +33,8 @@ HEADERS += \
     include/diaryread.h \
     include/location_choose.h \
     include/tool_class/update_database.h \
-    include/login_widget.h
+    include/login_widget.h \
+    include/top_k_algorithm.h
 
 FORMS += \
     ui/login_widget.ui \

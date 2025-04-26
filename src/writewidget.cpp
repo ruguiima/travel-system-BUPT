@@ -6,7 +6,7 @@ writewidget::writewidget(user u, QWidget *parent, QString site, int site_id)
     , ui(new Ui::writewidget)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::FramelessWindowHint);
+    // setWindowFlags(Qt::FramelessWindowHint);
     this->u = u;
     this->site = site;
     this->d.site_id = site_id;

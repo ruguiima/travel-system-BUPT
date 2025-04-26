@@ -13,10 +13,13 @@ diarywindow::diarywindow(user u, QWidget *parent)
     button_grooup->addButton(ui->scoreorder);
     button_grooup->addButton(ui->popularityorder);
     button_grooup->setExclusive(true);
-    diarys = read_data::getInstance().read_diary_data();
-    locations = read_data::getInstance().read_location_data();
+    this->locations = read_data::getInstance().read_location_data();
+    this->diarys = read_data::getInstance().read_diary_data();
+    this->diarylist = this->diarys;
+    ui->popularityorder->setChecked(true);
     connect(button_grooup, &QButtonGroup::buttonClicked, this, &diarywindow::choose_sort_model);
-    show_diary(diarys);
+    emit button_grooup->buttonClicked(button_grooup->checkedButton());
+    qDebug() << "日记页面加载完成";
 }
 
 diarywindow::~diarywindow()
@@ -49,48 +52,29 @@ void diarywindow::open_write_widget(const QString l, const int id){
 }
 
 void diarywindow::choose_sort_model(){             //排序方法选择
-    int k;
+    int k = 10;
     QString str =button_grooup->checkedButton()->text();
-
-    if(!str.compare("按热度排序"))
-        k = 1;
-    else
-        k = 2;
-    qDebug() << k;
-}
-
-std::vector<diary> diarywindow::search_title(const std::string str, std::vector<diary> diarys){
-    std::vector<diary> newdiarys;
-    for(const diary &d : diarys)
-        if(d.title.find(str))
-            newdiarys.push_back(d);
-    return newdiarys;
-
-}
-
-std::vector<diary> diarywindow::search_site(const std::string str, std::vector<diary> diarys, std::vector<location> locations){
-    std::vector<diary> newdiarys;
-    int id;
-    for(const location &l : locations)
-        if(!l.title.compare(str)){
-            id = l.id;
-            break;
-        }
-
-    for(const diary &d : diarys){
-        if(d.site_id == id)
-            newdiarys.push_back(d);
+    std::vector<diary> ds;
+    if(!str.compare("按热度排序")){
+        topKAlgorithm<diary, byHeat> algorithm;
+        ds = algorithm.getTopK(this->diarylist, k);
     }
-    return newdiarys;
+    else
+    {
+        topKAlgorithm<diary, byScore> algorithm;
+        ds = algorithm.getTopK(this->diarylist, k);
+    }
+    show_diary(ds);
 }
-
 
 void diarywindow::show_diary(std::vector<diary> diarys)             //日记列表初始化
 {
     ui->diaryslist->clear();
     // QVBoxLayout *layout = new QVBoxLayout(ui->diaryslist);
     for(diary d : diarys){
-        std::string str = d.title + "\t景点:" + "未知" + "\t作者:" + d.author_name;
+        std::string str = d.title + "\t景点:" + d.site_name + "\t作者:" + d.author_name + "\t 热度："
+                          + QString::number(d.popularity).toStdString() + "\t 评分：" + QString::number(d.score).toStdString();
+        // qDebug() << QString::fromStdString(str);
         QListWidgetItem *item = new QListWidgetItem(ui->diaryslist);
         item->setText(QString::fromStdString(str));
         item->setData(Qt::UserRole, QVariant::fromValue(d)); // 保存额外的信息
@@ -101,18 +85,48 @@ void diarywindow::show_diary(std::vector<diary> diarys)             //日记列�
 
 void diarywindow::on_sitesearch_clicked()
 {
-    std::vector<diary> adiarys = search_site(ui->searchbar->toPlainText().toStdString(), diarys, locations);
-    diarywindow::show_diary(adiarys);
+    this->diarylist = search_site(ui->searchbar->toPlainText().toStdString(), diarys, locations);
+    emit button_grooup->buttonClicked(button_grooup->checkedButton());
 }
-
-
 
 
 void diarywindow::on_titlesearch_clicked()
 {
-    std::vector<diary> adiarys = search_title(ui->searchbar->toPlainText().toStdString(), diarys);
-    diarywindow::show_diary(adiarys);
+    this->diarylist = search_title(ui->searchbar->toPlainText().toStdString(), diarys);
+    emit button_grooup->buttonClicked(button_grooup->checkedButton());
 }
 
+void diarywindow::on_refresh_clicked()
+{
+    this->diarys = read_data::getInstance().read_diary_data();
+    this->diarylist = this->diarys;
+    emit button_grooup->buttonClicked(button_grooup->checkedButton());
+}
 
+std::vector<diary> diarywindow::search_title(const std::string str, std::vector<diary> diarys){
+    std::vector<diary> newdiarys;
+    for(const diary &d : diarys)
+        if(d.title.find(str) != std::string::npos){
+            newdiarys.push_back(d);
+            qDebug() << "搜到的日记名称：" << QString::fromStdString(d.title);
+        }
+    return newdiarys;
 
+}
+
+std::vector<diary> diarywindow::search_site(const std::string str, std::vector<diary> diarys, std::vector<location> locations){
+    std::vector<diary> newdiarys;
+    int id;
+    for(const location &l : locations)
+        if(!l.title.compare(str)){
+            id = l.id;
+            qDebug() << "搜到的景点id " << id;
+            break;
+        }
+
+    for(const diary &d : diarys){
+        if(d.site_id == id)
+            newdiarys.push_back(d);
+    }
+    return newdiarys;
+}

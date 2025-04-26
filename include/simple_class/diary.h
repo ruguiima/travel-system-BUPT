@@ -9,6 +9,7 @@ public:
     std::string title;
     std::string context;
     int site_id;
+    std::string site_name;
     int author;
     std::string author_name;
     int popularity;

@@ -15,28 +15,36 @@ read_data& read_data::getInstance(){
 }
 
 std::vector<diary> read_data::read_diary_data(){
+    if(!db.isOpen())
+        db.open();
     std::vector<diary> diarys;
-    QSqlQueryModel model;
-    model.setQuery("Select * From Diary");
-    for(int i = 0;i < model.rowCount();i++){
+    QSqlQuery query;
+    query.exec("SELECT d.*, u.account AS author_name, l.name AS site_name "
+               "FROM Diary d "
+               "LEFT JOIN User u ON d.author = u.id "
+               "LEFT JOIN Location l ON d.site_id = l.id");
+
+    while (query.next()) {
         diary d;
-        d.id = model.record(i).value("id").toInt();
-        d.title = model.record(i).value("title").toString().toStdString();
-        d.context = model.record(i).value("context").toString().toStdString();
-        d.site_id = model.record(i).value("site_id").toInt();
-        d.author = model.record(i).value("author").toInt();
-        d.popularity = model.record(i).value("popularity").toInt();
-        d.score = model.record(i).value("score").toFloat();
-        d.score_number = model.record(i).value("score_number").toInt();
-        d.image_path = model.record(i).value("image_path").toString().toStdString();
-        if(d.author == 0)
-            d.author_name = "佚名";
+        d.id = query.value("id").toInt();
+        d.title = query.value("title").toString().toStdString();
+        d.context = query.value("context").toString().toStdString();
+        d.site_id = query.value("site_id").toInt();
+        d.site_name = query.value("site_name").toString().toStdString(); // 直接从查询获得
+        d.author = query.value("author").toInt();
+        d.popularity = query.value("popularity").toInt();
+        d.score = query.value("score").toFloat();
+        d.score_number = query.value("score_number").toInt();
+        d.image_path = query.value("image_path").toString().toStdString();
+        d.author_name = query.value("author_name").toString().toStdString(); // 直接从查询获得
+
         diarys.push_back(d);
     }
     return diarys;
 }
-
 std::vector<location> read_data::read_location_data(){
+    if(!db.isOpen())
+        db.open();
     std::vector<location> locations;
     QSqlQueryModel model;
     model.setQuery("Select * From Location");
@@ -55,6 +63,8 @@ std::vector<location> read_data::read_location_data(){
 }
 
 user read_data::read_user_data(QString account){
+    if(!db.isOpen())
+        db.open();
     user u;
     QSqlTableModel model;
     model.setTable("User");

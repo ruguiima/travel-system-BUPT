@@ -21,17 +21,20 @@ diaryread::diaryread(diary info, QWidget *parent)
     button_group->addButton(ui->score4);
     button_group->addButton(ui->score5);
     ui->context->setWordWrap(true);
-    ui->image->setWordWrap(true);
     ui->scrollArea->setWidgetResizable(true);
+    QLabel *image = new QLabel();
     if(info.image_path.compare("0")){
         qDebug() << "图片输出" ;
-        QPixmap px(QString::fromStdString(info.image_path));
-        QPixmap scaledImage = px.scaled(341, 221, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        ui->image->setPixmap(scaledImage);
-        ui->image->setFixedSize(px.size());
+        QPixmap px(QString::fromStdString(info.image_path)); 
+        image->setPixmap(px.scaledToWidth(ui->scrollArea->viewport()->width(), Qt::SmoothTransformation)); // 调整图像宽度
     }
     else
-        ui->image->hide();
+        image->hide();
+    QWidget *contentWidget = new QWidget();
+    ui->scrolllayout->addWidget(ui->context);
+    ui->scrolllayout->addWidget(image);
+    contentWidget->setLayout(ui->scrolllayout);
+    ui->scrollArea->setWidget(contentWidget);
 }
 
 diaryread::~diaryread()
