@@ -1,6 +1,8 @@
 #include "route_plan.h"
 #include <QString>
 #include <iostream>
+
+using namespace std;
 int main(){
     // Test the route_plan class
     route_plan rp;
@@ -12,5 +14,8 @@ int main(){
     // Create the graph
     rp.create_graph();
     std::cout << "Graph created successfully!" << std::endl;
+    // Perform Dijkstra's algorithm
+    rp.put_path();
+    std::cout << "Dijkstra's algorithm executed successfully!" << std::endl;
     return 0;
 }

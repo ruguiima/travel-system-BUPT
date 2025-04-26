@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <unordered_map>
+#include <queue>
 
 // Custom hash function for coor (std::pair<double, double>)
 namespace std {
@@ -59,7 +60,7 @@ void route_plan::load(QString file_path) {
             QJsonArray end = coordinates[1].toArray();
             coor startCoor = {start[0].toDouble(), start[1].toDouble()};
             coor endCoor = {end[0].toDouble(), end[1].toDouble()};
-            road_type rType = properties["description"].toString() == "自行车道" ? cycleway : path;
+            road_type rType = properties["description"].toString() == "自行车道" ? cycleway : sidewalk;
             double cong = properties["congestion"].toDouble();
             road r(startCoor, endCoor, rType, cong);
             r.calcu_leng();
@@ -93,23 +94,74 @@ void route_plan::create_graph() {
     graph_t.resize(places.size());
     graph_m.resize(places.size());
     for (const auto &road : roads) {
-        int start_id = coor_to_id[road.getStart()];
-        int end_id = coor_to_id[road.getEnd()];
+        int start_id, end_id;
+        auto it1 = coor_to_id.find(road.getStart());
+        if (it1 == coor_to_id.end()) continue; 
+        start_id = it1->second;
+        auto it2 = coor_to_id.find(road.getEnd());
+        if (it2 == coor_to_id.end()) continue; 
+        end_id = it2->second;
         
-        graph_d[start_id].emplace_back(end_id, road.getLength(), path);
-        graph_d[end_id].emplace_back(start_id, road.getLength(), path);
+        graph_d[start_id].emplace_back(end_id, road.getLength(), sidewalk);
+        graph_d[end_id].emplace_back(start_id, road.getLength(), sidewalk);
 
-        graph_t[start_id].emplace_back(end_id, road.getCong() * road.getLength() / 1.3, path);
-        graph_t[end_id].emplace_back(start_id, road.getCong() * road.getLength() / 1.3, path);
+        graph_t[start_id].emplace_back(end_id, road.getLength() / (1.3 * road.getCong()), sidewalk);
+        graph_t[end_id].emplace_back(start_id, road.getLength() / (1.3 * road.getCong()), sidewalk);
 
         road_type type = road.getType();
         if(type == cycleway) {
-            graph_m[start_id].emplace_back(end_id, road.getCong() * road.getLength() / 4.0, cycleway);
-            graph_m[end_id].emplace_back(start_id, road.getCong() * road.getLength() / 4.0, cycleway);
-        } else if (type == path) {
-            graph_m[start_id].emplace_back(end_id, road.getCong() * road.getLength() / 1.3, path);
-            graph_m[end_id].emplace_back(start_id, road.getCong() * road.getLength() / 1.3, path);
+            graph_m[start_id].emplace_back(end_id, road.getCong() * road.getLength() / (4.0 * road.getCong()), cycleway);
+            graph_m[end_id].emplace_back(start_id, road.getCong() * road.getLength() / (4.0 * road.getCong()), cycleway);
+        } else if (type == sidewalk) {
+            graph_m[start_id].emplace_back(end_id, road.getCong() * road.getLength() / (1.3 * road.getCong()), sidewalk);
+            graph_m[end_id].emplace_back(start_id, road.getCong() * road.getLength() / (1.3 * road.getCong()), sidewalk);
         }
     }
         
+}
+
+double route_plan::dijkstra(int start, int end, vector<vector<place_info>>& graph, vector<place_info>& record) {
+    const double INF = numeric_limits<double>::max();
+    vector<double> dist(graph.size(), INF);
+    vector<place_info> prev(graph.size());
+    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
+    dist[start] = 0;
+    pq.push({0, start});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (u == end) break;
+        
+        if (d > dist[u]) continue;
+        for (const auto &neighbor : graph[u]) {
+            int v = neighbor.getId();
+            double weight = neighbor.getWeight();
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                prev[v] = place_info(u, weight, neighbor.getType());
+                
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    int cur = end;
+
+    while(cur != start) {
+        record.emplace_back(cur, dist[cur], prev[cur].getType());
+        cur = prev[cur].getId();
+    }
+    reverse(record.begin(), record.end());
+    return dist[end];
+}
+
+void route_plan::put_path() {
+    vector<place_info> record;
+    double dist = route_plan::dijkstra(12, 52, graph_m, record);
+    qDebug() << "最短用时:" << dist;
+    qDebug() << "路径详情：";
+    for (const auto &p : record) {
+        qDebug() << "下一途径点：" << places[p.getId()].getName()<< "共用时：" << p.getWeight() 
+        << "s 方式：" << (p.getType() == cycleway ? "自行车道" : "人行道") ;
+    }
 }

@@ -17,7 +17,7 @@ private:
     QString type;
 };
 
-enum road_type {cycleway, path};
+enum road_type {cycleway, sidewalk};
 
 class road {
 public:
@@ -56,10 +56,14 @@ class route_plan {
 public:
     void load(QString file_path);
     void create_graph();
+    static double dijkstra(int start, int end, std::vector< std::vector<place_info> >& graph, std::vector<place_info>& record);
+    void put_path();
 private:
     std::vector<place> places;
     std::vector<road> roads;
     std::vector< std::vector<place_info> > graph_d;
     std::vector< std::vector<place_info> > graph_t;
     std::vector< std::vector<place_info> > graph_m;
+
+
 };

@@ -70,6 +70,16 @@
         "qlistwidgetitem": "cpp",
         "qdialog": "cpp",
         "qmessagebox": "cpp",
-        "qmainwindow": "cpp"
+        "qmainwindow": "cpp",
+        "bit": "cpp",
+        "charconv": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "format": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp",
+        "stdfloat": "cpp",
+        "stop_token": "cpp"
     }
 }
