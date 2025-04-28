@@ -224,15 +224,24 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </property>
      <layout class="QVBoxLayout" name="scrolllayout">
       <item>
-       <widget class="QLabel" name="context">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
+       <widget class="QTextBrowser" name="context"/>
       </item>
      </layout>
     </widget>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="searchbutton">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>0</y>
+     <width>88</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>搜索</string>
+   </property>
   </widget>
  </widget>
  <resources/>

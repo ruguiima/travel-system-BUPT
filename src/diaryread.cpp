@@ -1,6 +1,9 @@
 #include "diaryread.h"
 #include "ui_diaryread.h"
 
+#include <QMessageBox>
+#include <QRegularExpression>
+
 diaryread::diaryread(diary info, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::diaryread)
@@ -20,7 +23,7 @@ diaryread::diaryread(diary info, QWidget *parent)
     button_group->addButton(ui->score3);
     button_group->addButton(ui->score4);
     button_group->addButton(ui->score5);
-    ui->context->setWordWrap(true);
+    // ui->context->setWordWrap
     ui->scrollArea->setWidgetResizable(true);
     QLabel *image = new QLabel();
     if(info.image_path.compare("0")){
@@ -64,5 +67,22 @@ void diaryread::diary_score_change(int number)
 void diaryread::on_close_botton_clicked()
 {
     diaryread::~diaryread();
+}
+
+
+void diaryread::on_searchbutton_clicked()
+{
+    QString str = ui->context_search->toPlainText();
+    if(info.context.find(str.toStdString()) == std::string::npos){
+        QMessageBox::warning(this, "失败", "没有搜索到对应内容");
+        ui->context->setText(QString::fromStdString(info.context));
+    }
+    else {
+        QString highlightedText = QString::fromStdString(info.context);
+        QString replacement = "<span style='background-color: yellow;'>%1</span>";
+        QRegularExpression regex(QRegularExpression::escape(str));
+        highlightedText.replace(regex, replacement.arg(str));
+        ui->context->setHtml(highlightedText); // 更新 QTextBrowser 的内容
+    }
 }
 

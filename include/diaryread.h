@@ -27,6 +27,8 @@ signals:
 private slots:
     void on_close_botton_clicked();
 
+    void on_searchbutton_clicked();
+
 private:
     Ui::diaryread *ui;
     QButtonGroup *button_group;
