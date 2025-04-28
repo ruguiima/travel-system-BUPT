@@ -7,6 +7,7 @@ MainWindow::MainWindow(user u, QWidget *parent)
 {
     ui->setupUi(this);
     this->u = u;
+    ui->welcome->setText("你好，" + QString::fromStdString(u.account));
 }
 
 MainWindow::~MainWindow()
