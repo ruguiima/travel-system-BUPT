@@ -57,6 +57,11 @@ std::vector<location> read_data::read_location_data(){
         d.popularity = model.record(i).value("popularity").toInt();
         d.score = model.record(i).value("score").toFloat();
         d.score_number = model.record(i).value("score_number").toInt();
+        d.food = model.record(i).value("food").toFloat();
+        d.trip = model.record(i).value("trip").toFloat();
+        d.sport = model.record(i).value("sport").toFloat();
+        d.study = model.record(i).value("study").toFloat();
+        qDebug() << d.id << " " << d.food << " " << d.trip << " " << d.sport << " " << d.study;
         locations.push_back(d);
     }
     return locations;
