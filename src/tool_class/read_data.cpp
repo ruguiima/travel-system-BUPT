@@ -61,7 +61,7 @@ std::vector<location> read_data::read_location_data(){
         d.trip = model.record(i).value("trip").toFloat();
         d.sport = model.record(i).value("sport").toFloat();
         d.study = model.record(i).value("study").toFloat();
-        qDebug() << d.id << " " << d.food << " " << d.trip << " " << d.sport << " " << d.study;
+        // qDebug() << d.id << " " << d.food << " " << d.trip << " " << d.sport << " " << d.study;
         locations.push_back(d);
     }
     return locations;
