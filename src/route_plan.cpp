@@ -157,11 +157,65 @@ double route_plan::dijkstra(int start, int end, vector<vector<place_info>>& grap
 
 void route_plan::put_path() {
     vector<place_info> record;
-    double dist = route_plan::dijkstra(12, 52, graph_m, record);
+    double dist = route_plan::shortest_path(12, {5,13,36,52,64,66}, graph_m, record);
     qDebug() << "最短用时:" << dist;
     qDebug() << "路径详情：";
     for (const auto &p : record) {
         qDebug() << "下一途径点：" << places[p.getId()].getName()<< "共用时：" << p.getWeight() 
         << "s 方式：" << (p.getType() == cycleway ? "自行车道" : "人行道") ;
     }
+}
+
+
+double route_plan::shortest_path(int start, const vector<int>& end, vector<vector<place_info>>& graph, vector<place_info>& record){
+    const double INF = numeric_limits<double>::max();
+    int cur = start;
+    double all_dist = 0;
+    vector<bool> visited(end.size(), false);
+    for(int i = 0; i < end.size(); ++i) {
+        vector<double> dist(graph.size(), INF);
+        vector<place_info> prev(graph.size());
+        priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
+
+        dist[cur] = 0;
+        pq.push({0, cur});
+        int prior;
+        while (!pq.empty()) {
+            auto [d, u] = pq.top();
+            pq.pop();
+            for(int j = 0; j < end.size(); ++j) {
+                if (u == end[j] && !visited[j]) {
+                    prior = cur;
+                    cur = end[j];
+                    visited[j] = true;
+                    goto next;
+                }
+            }
+                
+            
+            if (d > dist[u]) continue;
+            for (const auto &neighbor : graph[u]) {
+                int v = neighbor.getId();
+                double weight = neighbor.getWeight();
+                if (dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                    prev[v] = place_info(u, weight, neighbor.getType());
+                    
+                    pq.push({dist[v], v});
+                }
+            }
+        }
+        next:
+        int next = cur;
+        vector<place_info> temp;
+        while(next != prior) {
+            temp.emplace_back(next, all_dist + dist[next], prev[next].getType());
+            next = prev[next].getId();
+        }
+        for(auto it = temp.rbegin(); it != temp.rend(); ++it){
+            record.push_back(*it);
+        }
+        all_dist += dist[cur];
+    }
+    return all_dist;
 }

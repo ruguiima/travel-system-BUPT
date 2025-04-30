@@ -58,6 +58,7 @@ public:
     void create_graph();
     static double dijkstra(int start, int end, std::vector< std::vector<place_info> >& graph, std::vector<place_info>& record);
     void put_path();
+    static double shortest_path(int start, const std::vector<int>& end, std::vector< std::vector<place_info> >& graph, std::vector<place_info>& record);
 private:
     std::vector<place> places;
     std::vector<road> roads;
