@@ -23,3 +23,12 @@ void MainWindow::on_diary_widget_clicked()
     diary_window->show();
 }
 
+
+void MainWindow::on_roadwidget_clicked()
+{
+    this->hide();
+    cam = new campus_nav();
+    connect(cam, &campus_nav::windowclose, this, &MainWindow::show);
+    cam->show();
+}
+
