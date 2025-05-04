@@ -1,6 +1,7 @@
 #include "diarywindow.h"
 #include "ui_diarywindow.h"
 #include "tool_class/read_data.h"
+#include "kmp_search.h"
 
 diarywindow::diarywindow(user u, QWidget *parent)
     : QWidget(parent)
@@ -106,7 +107,7 @@ void diarywindow::on_refresh_clicked()
 std::vector<diary> diarywindow::search_title(const std::string str, std::vector<diary> diarys){
     std::vector<diary> newdiarys;
     for(const diary &d : diarys)
-        if(d.title.find(str) != std::string::npos){
+        if(KMP::kmpMatch(d.title,str)){
             newdiarys.push_back(d);
             qDebug() << "搜到的日记名称：" << QString::fromStdString(d.title);
         }
@@ -118,7 +119,7 @@ std::vector<diary> diarywindow::search_site(const std::string str, std::vector<d
     std::vector<diary> newdiarys;
     int id;
     for(const location &l : locations)
-        if(!l.title.compare(str)){
+        if(KMP::kmpMatch(l.title,str)){
             id = l.id;
             qDebug() << "搜到的景点id " << id;
             break;

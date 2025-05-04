@@ -13,6 +13,7 @@ SOURCES += \
     src/database_connection.cpp \
     src/diaryread.cpp \
     src/diarywindow.cpp \
+    src/kmp_search.cpp \
     src/location_choose.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     include/campus_nav.h \
     include/database_connection.h \
     include/diarywindow.h \
+    include/kmp_search.h \
     include/mainwindow.h \
     include/route_plan.h \
     include/simple_class/diary.h \
