@@ -2,31 +2,62 @@
 #define TOPKALGORITHM_H
 
 #include <vector>
-#include <queue>
 #include <algorithm>
-#include "database_connection.h"  // 直接使用数据库连接类的数据结构
 
-// 使用数据库中的数据结构（假设已通过 read_data.h 定义）
-#include "tool_class/read_data.h"
 
-// 排序依据枚举
-enum sortCriteria { byHeat, byScore };
-
-// 综合评分计算函数（声明）
-template<typename T>
-float calculateScore(const T& item, sortCriteria criteria);
-
-// 最小堆比较器（声明）
-template<typename T, sortCriteria criteria>
-struct compareScore {
-    bool operator()(const T& a, const T& b);
-};
-
-// Top-K算法模板类（声明）
-template<typename T, sortCriteria criteria>
-class topKAlgorithm {
+template<typename T, typename criteria>
+class my_pq {
+private:
+    std::vector<T> heap;
+    criteria cmp;
 public:
-    static std::vector<T> getTopK(const std::vector<T>& items, int k);
+    my_pq(criteria cmp) : cmp(cmp) {}
+    // 修改push和pop函数为自实现
+    void push(const T& item){
+        // 目前使用标准库维护堆，请修改为自实现
+        heap.push_back(item);
+        std::push_heap(heap.begin(), heap.end(), cmp);
+    }
+    void pop(){
+        // 目前使用标准库维护堆，请修改为自实现
+        std::pop_heap(heap.begin(), heap.end(), cmp);
+        heap.pop_back();
+    }
+    const T& top() const{
+        return heap.front();
+    }
+    bool empty() const{
+        return heap.empty();
+    }
 };
+// Top-K算法实现
+template<typename T, typename criteria>
+std::vector<T> getTopK(const std::vector<T>& items, int k, criteria cmp) {
+    my_pq<T, criteria> minHeap(cmp);
+
+    // 初始化堆
+    for (int i = 0; i < std::min(k, (int)items.size()); ++i) {
+        minHeap.push(items[i]);
+    }
+
+    // 处理剩余元素
+    for (size_t i = k; i < items.size(); ++i) {
+        if (cmp(items[i], minHeap.top())) {
+            minHeap.pop();
+            minHeap.push(items[i]);
+        }
+    }
+
+    // 提取结果
+    std::vector<T> result;
+    while (!minHeap.empty()) {
+        result.push_back(minHeap.top());
+        minHeap.pop();
+    }
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
+
 
 #endif // TOPKALGORITHM_H

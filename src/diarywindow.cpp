@@ -2,6 +2,7 @@
 #include "ui_diarywindow.h"
 #include "tool_class/read_data.h"
 #include "kmp_search.h"
+#include "top_k_algorithm.h"
 
 diarywindow::diarywindow(user u, QWidget *parent)
     : QWidget(parent)
@@ -57,13 +58,15 @@ void diarywindow::choose_sort_model(){             //排序方法选择
     QString str =button_grooup->checkedButton()->text();
     std::vector<diary> ds;
     if(!str.compare("按热度排序")){
-        topKAlgorithm<diary, byHeat> algorithm;
-        ds = algorithm.getTopK(this->diarylist, k);
+        ds = getTopK(this->diarylist, k, [](const diary &a, const diary &b) {
+            return a.popularity > b.popularity; // 按热度排序
+        });
     }
     else
     {
-        topKAlgorithm<diary, byScore> algorithm;
-        ds = algorithm.getTopK(this->diarylist, k);
+        ds = getTopK(this->diarylist, k, [](const diary &a, const diary &b) {
+            return a.score > b.score; // 按评分排序
+        });
     }
     show_diary(ds);
 }

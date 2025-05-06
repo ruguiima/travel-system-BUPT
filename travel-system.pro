@@ -22,8 +22,7 @@ SOURCES += \
     src/tool_class/read_data.cpp \
     src/tool_class/road_calcu.cpp \
     src/tool_class/update_database.cpp \
-    src/writewidget.cpp \
-    src/top_k_algorithm.cpp
+    src/writewidget.cpp
 
 HEADERS += \
     include/campus_nav.h \
