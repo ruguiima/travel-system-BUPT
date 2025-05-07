@@ -1,6 +1,7 @@
 #ifndef DIARYWINDOW_H
 #define DIARYWINDOW_H
 
+#include "include/tool_class/HuffmanCoding.h"
 #include <QWidget>
 #include "location_choose.h"
 #include "diaryread.h"
@@ -36,6 +37,7 @@ public:
 
 signals:
     void windowclose();
+    void open_local_file();
 
 private slots:
     void on_writediary_clicked();
@@ -49,6 +51,8 @@ private slots:
     void on_diaryslist_itemActivated(QListWidgetItem *item);
 
     void on_refresh_clicked();
+
+    void on_load_local_diary_clicked();
 
 private:
     Ui::diarywindow *ui;

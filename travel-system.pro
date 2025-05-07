@@ -19,10 +19,11 @@ SOURCES += \
     src/mainwindow.cpp \
     src/login_widget.cpp \
     src/route_plan.cpp \
+    src/tool_class/HuffmanCoding.cpp \
     src/tool_class/read_data.cpp \
     src/tool_class/road_calcu.cpp \
     src/tool_class/update_database.cpp \
-    src/writewidget.cpp
+    src/writewidget.cpp \
 
 HEADERS += \
     include/campus_nav.h \
@@ -35,6 +36,7 @@ HEADERS += \
     include/simple_class/location.h \
     include/simple_class/map_elements.h \
     include/simple_class/user.h \
+    include/tool_class/HuffmanCoding.h \
     include/tool_class/read_data.h \
     include/writewidget.h \
     include/diaryread.h \
