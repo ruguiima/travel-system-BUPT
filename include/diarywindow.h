@@ -1,7 +1,7 @@
 #ifndef DIARYWINDOW_H
 #define DIARYWINDOW_H
 
-#include "include/tool_class/HuffmanCoding.h"
+#include "tool_class/HuffmanCoding.h"
 #include <QWidget>
 #include "location_choose.h"
 #include "diaryread.h"

@@ -1,4 +1,4 @@
-#include "include/tool_class/HuffmanCoding.h"
+#include "tool_class/HuffmanCoding.h"
 
 #include <QTextStream>
 #include <qfile.h>

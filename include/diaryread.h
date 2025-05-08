@@ -5,7 +5,7 @@
 #include "simple_class/diary.h"
 #include <QButtonGroup>
 #include "tool_class/update_database.h"
-#include "include/tool_class/HuffmanCoding.h"
+#include "tool_class/HuffmanCoding.h"
 #include <QPixmap>
 
 namespace Ui {

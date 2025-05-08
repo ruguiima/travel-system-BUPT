@@ -1,7 +1,7 @@
 #ifndef HUFFMANCODING_H
 #define HUFFMANCODING_H
 
-#include "include/simple_class/diary.h"
+#include "simple_class/diary.h"
 #include <QString>
 #include <map>
 #include <queue>
