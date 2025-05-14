@@ -88,8 +88,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QPushButton" name="writediary">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>260</y>
+     <x>20</x>
+     <y>250</y>
      <width>111</width>
      <height>101</height>
     </rect>
@@ -119,6 +119,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="text">
     <string>刷新</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="load_local_diary">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>410</y>
+     <width>101</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>加载本地日记</string>
    </property>
   </widget>
  </widget>

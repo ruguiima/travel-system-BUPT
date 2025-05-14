@@ -5,6 +5,7 @@
 #include "simple_class/diary.h"
 #include <QButtonGroup>
 #include "tool_class/update_database.h"
+#include "tool_class/HuffmanCoding.h"
 #include <QPixmap>
 
 namespace Ui {
@@ -24,10 +25,15 @@ public:
 signals:
     void closewidget();
 
+public slots:
+    void local_diary_read();
+
 private slots:
     void on_close_botton_clicked();
 
     void on_searchbutton_clicked();
+
+    void on_compress_donwload_clicked();
 
 private:
     Ui::diaryread *ui;

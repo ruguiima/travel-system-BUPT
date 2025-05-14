@@ -10,7 +10,6 @@ diarywindow::diarywindow(user u, QWidget *parent)
 {
     ui->setupUi(this);
     this->u = u;
-    // qDebug() << "当前登录用户为：" << u.account;
     button_grooup = new QButtonGroup(this);
     button_grooup->addButton(ui->scoreorder);
     button_grooup->addButton(ui->popularityorder);
@@ -134,3 +133,31 @@ std::vector<diary> diarywindow::search_site(const std::string str, std::vector<d
     }
     return newdiarys;
 }
+
+void diarywindow::on_load_local_diary_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("选择文件"),           // 对话框标题
+        QDir::homePath(),        // 默认起始目录
+        tr("文本文件 (*.travel);;" // 文件过滤器
+           "所有文件 (*)")
+        );
+
+    // 检查是否选择了文件
+    if (fileName.isEmpty()) {
+        QMessageBox::warning(this, "失败", "未选择文件");
+        return;
+    }
+    else
+        QMessageBox::information(this, "成功", "正在加载文件");
+    // 读取文件内容
+    HuffmanCoding h;
+    diary d = h.load_diary(fileName);
+    diaryread *dr = new diaryread(d);
+    connect(this, &diarywindow::open_local_file, dr, &diaryread::local_diary_read);
+    connect(dr, &diaryread::closewidget, this, &diarywindow::show);
+    emit open_local_file();
+    dr->show();
+}
+
