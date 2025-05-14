@@ -32,3 +32,11 @@ void MainWindow::on_roadwidget_clicked()
     cam->show();
 }
 
+void MainWindow::on_sitewidget_clicked()
+{
+    this->hide();
+    site =new site_recommend();
+    connect(site, &site_recommend::windowclose,this,&MainWindow::show);
+    site->show();
+}
+
