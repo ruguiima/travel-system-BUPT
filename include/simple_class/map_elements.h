@@ -4,6 +4,7 @@
 #include <QString>
 
 using coor = std::pair<double, double>;
+double calcu_length(coor start, coor end);
 
 class place {
 public:
@@ -12,6 +13,7 @@ public:
     coor getLoct() const { return loct; }
     QString getName() const { return name; }
     QString getType() const { return type; }
+    double dist;
 private:
     coor loct;
     QString name;
@@ -26,11 +28,10 @@ public:
         : start(start), end(end),  type(type), cong(cong) {}
     coor getStart() const { return start; }
     coor getEnd() const { return end; }
+    void setLength(double len) { length = len; }
     double getLength() const { return length; }
     road_type getType() const { return type; }
     double getCong() const { return cong; }
-
-    void calcu_leng();
 private:
     coor start, end;
     double length;

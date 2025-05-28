@@ -1,7 +1,7 @@
 #include <cmath>
 #include "simple_class/map_elements.h"
 
-void road::calcu_leng() {
+double calcu_length(coor start, coor end) {
     const double degToRad = M_PI / 180.0;
     const double earthRadius = 6378137.0;
 
@@ -12,5 +12,5 @@ void road::calcu_leng() {
     double dx = dLon * earthRadius * cos(meanLat);
     double dy = dLat * earthRadius;
 
-    length = sqrt(dx * dx + dy * dy);
+    return sqrt(dx * dx + dy * dy);
 }

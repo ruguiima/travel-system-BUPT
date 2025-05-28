@@ -63,7 +63,7 @@ void route_plan::load(QString file_path) {
             road_type rType = properties["description"].toString() == "自行车道" ? cycleway : sidewalk;
             double cong = properties["congestion"].toDouble();
             road r(startCoor, endCoor, rType, cong);
-            r.calcu_leng();
+            r.setLength( calcu_length(r.getStart(), r.getEnd()) );
             roads.push_back(r);
 
         }
@@ -191,7 +191,7 @@ double route_plan::shortest_path(int start, const vector<int>& end, vector<vecto
                 }
             }
         }
-        next:
+next:
         int next = cur;
         vector<place_info> temp;
         while(next != prior) {
