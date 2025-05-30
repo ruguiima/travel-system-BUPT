@@ -6,6 +6,7 @@ writewidget::writewidget(user u, QWidget *parent, QString site, int site_id)
     , ui(new Ui::writewidget)
 {
     ui->setupUi(this);
+    this->setWindowTitle("日记编写");
     // setWindowFlags(Qt::FramelessWindowHint);
     this->u = u;
     this->site = site;

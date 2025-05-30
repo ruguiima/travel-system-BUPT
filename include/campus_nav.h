@@ -16,6 +16,7 @@ public:
     explicit campus_nav(QWidget *parent = nullptr);
     ~campus_nav();
     void show_nearby(std::vector<place> result);
+    void closeEvent(QCloseEvent *event) override;
 
 
 signals:

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(user u, QWidget *parent)
     : QMainWindow(parent)
@@ -38,5 +39,15 @@ void MainWindow::on_sitewidget_clicked()
     site =new site_recommend();
     connect(site, &site_recommend::windowclose,this,&MainWindow::show);
     site->show();
+}
+
+
+void MainWindow::on_exitbutton_clicked()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "退出确认", "感谢您的使用！您确定要退出吗？",
+                                                              QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        QApplication::quit(); // 退出应用程序
+    }
 }
 

@@ -29,6 +29,8 @@ private slots:
 
     void on_sitewidget_clicked();
 
+    void on_exitbutton_clicked();
+
 private:
     Ui::MainWindow *ui;
     user u;

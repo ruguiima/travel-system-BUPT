@@ -10,8 +10,8 @@ diaryread::diaryread(diary info, QWidget *parent)
 {
     info.popularity+=1;
     this->info = info;
-    this->setWindowTitle("正在浏览日志");
     ui->setupUi(this);
+    this->setWindowTitle("正在浏览日志");
     ui->context->setText(QString::fromStdString(info.context));
     ui->title->setText(QString::fromStdString(info.title));
     ui->author->setText("作者：" + QString::fromStdString(info.author_name));
@@ -43,10 +43,6 @@ diaryread::diaryread(diary info, QWidget *parent)
 
 diaryread::~diaryread()
 {
-    if(button_group->checkedButton() != nullptr)
-        diary_score_change((button_group->checkedButton()->text()).toInt());
-    diary_data_change();
-    emit closewidget();
     delete ui;
 }
 
@@ -65,9 +61,11 @@ void diaryread::diary_score_change(int number)
     this->info.score = ans / this->info.score_number;
 }
 
-void diaryread::on_close_botton_clicked()
-{
-    diaryread::~diaryread();
+void diaryread::closeEvent(QCloseEvent *event) {
+    if(button_group->checkedButton() != nullptr)
+        diary_score_change((button_group->checkedButton()->text()).toInt());
+    diary_data_change();
+    emit closewidget();
 }
 
 

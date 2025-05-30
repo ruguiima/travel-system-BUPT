@@ -26,6 +26,7 @@ campus_nav::campus_nav(QWidget *parent)
     completer->setFilterMode(Qt::MatchContains);
     ui->lineEdit_start->setCompleter(completer);
     ui->lineEdit_end->setCompleter(completer);
+    this->setWindowTitle("校园导航");
 
     rp.create_graph();
     qDebug() << "Created graph success.";
@@ -189,3 +190,6 @@ void campus_nav::on_pushButton_route_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+void campus_nav::closeEvent(QCloseEvent *event) {
+    emit windowclose(); // 发出信号
+}

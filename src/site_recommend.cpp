@@ -9,7 +9,7 @@ site_recommend::site_recommend(QWidget *parent)
     , ui(new Ui::site_recommend)
 {
     ui->setupUi(this);
-
+    this->setWindowTitle("景点推荐");
     // 设置按钮组
     this->locations = read_data::getInstance().read_location_data();
     this->locationlists=this->locations;
@@ -150,4 +150,7 @@ std::vector<location> site_recommend::search_site(const std::string str, std::ve
     return newlocations;
 }
 
+void site_recommend::closeEvent(QCloseEvent *event) {
+    emit windowclose(); // 发出信号
+}
 

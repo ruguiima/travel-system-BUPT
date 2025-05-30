@@ -9,15 +9,17 @@ diarywindow::diarywindow(user u, QWidget *parent)
     , ui(new Ui::diarywindow),write_widget()
 {
     ui->setupUi(this);
+    this->setWindowTitle("旅游日记");
     this->u = u;
     button_grooup = new QButtonGroup(this);
     button_grooup->addButton(ui->scoreorder);
     button_grooup->addButton(ui->popularityorder);
+    button_grooup->addButton(ui->mainsort);
     button_grooup->setExclusive(true);
     this->locations = read_data::getInstance().read_location_data();
     this->diarys = read_data::getInstance().read_diary_data();
     this->diarylist = this->diarys;
-    ui->popularityorder->setChecked(true);
+    ui->mainsort->setChecked(true);
     connect(button_grooup, &QButtonGroup::buttonClicked, this, &diarywindow::choose_sort_model);
     emit button_grooup->buttonClicked(button_grooup->checkedButton());
     qDebug() << "日记页面加载完成";
@@ -61,10 +63,15 @@ void diarywindow::choose_sort_model(){             //排序方法选择
             return a.popularity > b.popularity; // 按热度排序
         });
     }
-    else
+    else if(!str.compare("按评分排序"))
     {
         ds = getTopK(this->diarylist, k, [](const diary &a, const diary &b) {
             return a.score > b.score; // 按评分排序
+        });
+    }
+    else {
+        ds = getTopK(this->diarylist, k, [](const diary &a, const diary &b) {
+            return a.score*1000 + a.popularity > b.score*1000 + b.popularity;     //综合评分排序
         });
     }
     show_diary(ds);
@@ -75,11 +82,19 @@ void diarywindow::show_diary(std::vector<diary> diarys)             //日记列�
     ui->diaryslist->clear();
     // QVBoxLayout *layout = new QVBoxLayout(ui->diaryslist);
     for(diary d : diarys){
-        std::string str = d.title + "\t景点:" + d.site_name + "\t作者:" + d.author_name + "\t 热度："
-                          + QString::number(d.popularity).toStdString() + "\t 评分：" + QString::number(d.score).toStdString();
-        // qDebug() << QString::fromStdString(str);
+        std::ostringstream oss;
+
+        // 设置输出格式
+        oss << std::left; // 左对齐
+
+        // 控制字段宽度，确保在每列有固定的宽度
+        oss << std::setw(30) << d.title // 标题
+            << std::setw(50) << ("景点: " + d.site_name) // 景点名称
+            << std::setw(20) << ("作者: " + d.author_name) // 作者名称
+            << std::setw(20) << ("热度: " + QString::number(d.popularity).toStdString()) // 热度
+            << std::setw(20) << ("评分: " + QString::number(d.score, 'f', 1).toStdString()); // 评分（保留一位小数）
         QListWidgetItem *item = new QListWidgetItem(ui->diaryslist);
-        item->setText(QString::fromStdString(str));
+        item->setText(QString::fromStdString(oss.str()));
         item->setData(Qt::UserRole, QVariant::fromValue(d)); // 保存额外的信息
     }
 }
@@ -159,5 +174,9 @@ void diarywindow::on_load_local_diary_clicked()
     connect(dr, &diaryread::closewidget, this, &diarywindow::show);
     emit open_local_file();
     dr->show();
+}
+
+void diarywindow::closeEvent(QCloseEvent *event) {
+    emit windowclose(); // 发出信号
 }
 
