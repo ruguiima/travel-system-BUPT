@@ -29,6 +29,7 @@ public:
 
     explicit site_recommend(QWidget *parent = nullptr);
     ~site_recommend();
+    void closeEvent(QCloseEvent *event) override;
 
 signals:
     void windowclose();

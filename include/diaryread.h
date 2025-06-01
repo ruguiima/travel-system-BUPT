@@ -20,6 +20,7 @@ public:
     explicit diaryread(diary info, QWidget *parent = nullptr);
     void diary_data_change();
     void diary_score_change(int number);
+    void closeEvent(QCloseEvent *event) override;
     ~diaryread();
 
 signals:
@@ -29,7 +30,6 @@ public slots:
     void local_diary_read();
 
 private slots:
-    void on_close_botton_clicked();
 
     void on_searchbutton_clicked();
 

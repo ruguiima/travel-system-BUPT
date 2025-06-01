@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
+    <width>871</width>
     <height>447</height>
    </rect>
   </property>
@@ -63,7 +63,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>60</y>
+     <y>120</y>
      <width>101</width>
      <height>24</height>
     </rect>
@@ -101,9 +101,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QListWidget" name="diaryslist">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>180</x>
      <y>60</y>
-     <width>601</width>
+     <width>681</width>
      <height>361</height>
     </rect>
    </property>
@@ -132,6 +132,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </property>
    <property name="text">
     <string>加载本地日记</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="mainsort">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>101</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>综合排序</string>
    </property>
   </widget>
  </widget>

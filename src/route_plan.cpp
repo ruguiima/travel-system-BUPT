@@ -63,7 +63,7 @@ void route_plan::load(QString file_path) {
             road_type rType = properties["description"].toString() == "自行车道" ? cycleway : sidewalk;
             double cong = properties["congestion"].toDouble();
             road r(startCoor, endCoor, rType, cong);
-            r.calcu_leng();
+            r.setLength( calcu_length(r.getStart(), r.getEnd()) );
             roads.push_back(r);
 
         }
@@ -104,41 +104,6 @@ void route_plan::create_graph() {
         }
     }
         
-}
-
-double route_plan::dijkstra(int start, int end, vector<vector<place_info>>& graph, vector<place_info>& record) {
-    const double INF = numeric_limits<double>::max();
-    vector<double> dist(graph.size(), INF);
-    vector<place_info> prev(graph.size());
-    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
-    dist[start] = 0;
-    pq.push({0, start});
-    while (!pq.empty()) {
-        auto [d, u] = pq.top();
-        pq.pop();
-
-        if (u == end) break;
-        
-        if (d > dist[u]) continue;
-        for (const auto &neighbor : graph[u]) {
-            int v = neighbor.getId();
-            double weight = neighbor.getWeight();
-            if (dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
-                prev[v] = place_info(u, weight, neighbor.getType());
-                
-                pq.push({dist[v], v});
-            }
-        }
-    }
-    int cur = end;
-
-    while(cur != start) {
-        record.emplace_back(cur, dist[cur], prev[cur].getType());
-        cur = prev[cur].getId();
-    }
-    reverse(record.begin(), record.end());
-    return dist[end];
 }
 
 void route_plan::put_path() {
@@ -191,7 +156,7 @@ double route_plan::shortest_path(int start, const vector<int>& end, vector<vecto
                 }
             }
         }
-        next:
+next:
         int next = cur;
         vector<place_info> temp;
         while(next != prior) {

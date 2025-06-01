@@ -34,6 +34,7 @@ public:
     void show_diary(std::vector<diary> diarys);
     std::vector<diary> search_title(const std::string str, std::vector<diary> diarys);
     std::vector<diary> search_site(const std::string str, std::vector<diary> diarys, std::vector<location> locations);
+    void closeEvent(QCloseEvent *event) override;
 
 signals:
     void windowclose();
