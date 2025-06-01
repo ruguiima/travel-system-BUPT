@@ -4,6 +4,7 @@
 #include <vector>
 #include "top_k_algorithm.h"
 #include <QMessageBox>
+#include <QPainter>
 
 campus_nav::campus_nav(QWidget *parent)
     : QWidget(parent)
@@ -44,11 +45,14 @@ void campus_nav::on_pushButton_cur_clicked()
 
     if(place_name_to_id.find(ui->lineEdit_start->text()) != place_name_to_id.end()){
         cur_loc = place_name_to_id[ui->lineEdit_start->text()];
+
+        currentDrawMode = None;
+        update();
+
         QMessageBox::information(this, "", "位置更新成功");
     } else{
         QMessageBox::warning(this, "", "未找到该位置，请检查输入是否正确");
     }
-
 }
 
 
@@ -74,6 +78,9 @@ void campus_nav::on_pushButton_search_clicked()
         }
     }
     show_nearby(result);
+    placesToDraw = result;
+    currentDrawMode = DrawPlaces;
+    update();
 }
 
 void campus_nav::show_nearby(std::vector<place> result)
@@ -86,7 +93,7 @@ void campus_nav::show_nearby(std::vector<place> result)
         ui->textEdit_nearby->append("没有找到附近的场所。");
     }
     for (const place& p : result) {
-        ui->textEdit_nearby->append(p.getName());
+        ui->textEdit_nearby->append(p.getName() + "    距离：" + QString::number(p.dist) + "m");
     }
 }
 
@@ -176,6 +183,14 @@ void campus_nav::on_pushButton_plan_clicked()
         qDebug() << "Unknown strategy: " << strategy;
         return;
     }
+
+    placesToDraw.clear();
+    for (const auto &id : dest_id) {
+        placesToDraw.push_back(rp.places[id]);
+    }
+    routeToDraw = record;
+    currentDrawMode = DrawRoute;
+    update();
 }
 
 
@@ -192,4 +207,69 @@ void campus_nav::on_pushButton_route_clicked()
 
 void campus_nav::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
+}
+
+void campus_nav::paintEvent(QPaintEvent *event){
+    QWidget::paintEvent(event); // 保证其他控件正常绘制
+    QPainter painter(this);
+
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QImage mapImage(":/images/data/map.png");
+    QRect targetRect(29, 151, 400, 586);
+    painter.drawImage(targetRect, mapImage);
+
+    if (currentDrawMode == DrawRoute) {
+        painter.setPen(QPen(Qt::blue, 3));
+        for (size_t i = 0; i < routeToDraw.size(); ++i) {
+            if(routeToDraw[i].getType() == cycleway){
+                painter.setPen(QPen(Qt::green, 3)); // 自行车道用蓝色
+            } else {
+                painter.setPen(QPen(Qt::blue, 3)); // 人行道用绿色
+            }
+
+            coor tar1 = i == 0 ? rp.places[cur_loc].getLoct() : rp.places[routeToDraw[i - 1].getId()].getLoct();
+            coor tar2 = rp.places[routeToDraw[i].getId()].getLoct();
+            QPointF p1 = mapCoordToPixel(tar1, targetRect);
+            QPointF p2 = mapCoordToPixel(tar2, targetRect);
+            painter.drawLine(p1, p2);
+        }
+    }
+
+    if (currentDrawMode == DrawPlaces || currentDrawMode == DrawRoute) {
+        painter.setBrush(Qt::darkRed);
+        painter.setPen(Qt::black);
+
+        for (const auto& p : placesToDraw) {
+            QPointF pos = mapCoordToPixel(p.getLoct(), targetRect);
+            painter.drawEllipse(pos, 3, 3);  // 半径为3的圆点
+        }
+    }
+
+    QPixmap icon(":/images/data/icon.png");  // 替换成你的图标路径
+    QPointF pos = mapCoordToPixel(rp.places[cur_loc].getLoct(), targetRect);
+
+    QSize iconSize(24, 24);  // 自定义图标的绘制尺寸
+    QPointF topLeft(pos.x() - iconSize.width() / 2.0, pos.y() - iconSize.height() / 2.0);
+
+    QRectF iconRect(topLeft, iconSize);
+    painter.drawPixmap(iconRect.toRect(), icon);  // 绘制
+}
+
+
+QPointF campus_nav::mapCoordToPixel(coor tar, QRect r)
+{
+    const double north = 39.96499;
+    const double south = 39.95806;
+    const double west = 116.35501;
+    const double east = 116.36123;
+
+    double normX = (tar.first - west) / (east - west);
+    double normY = (tar.second - north) / (south - north);
+
+    double pixelX = r.left() + normX * r.width();
+    double pixelY = r.top() + normY * r.height();
+
+    return QPointF(pixelX, pixelY);
 }
