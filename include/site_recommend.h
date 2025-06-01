@@ -32,6 +32,7 @@ public:
 
 signals:
     void windowclose();
+    void return_to_main_window();
 
 private slots:
     void choose_sort_model();
@@ -42,6 +43,7 @@ private slots:
 
     void on_refresh_button_clicked();
 
+    void on_return_button_clicked();
 
 private:
     Ui::site_recommend *ui;
