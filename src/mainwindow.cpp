@@ -38,6 +38,7 @@ void MainWindow::on_sitewidget_clicked()
     this->hide();
     site =new site_recommend();
     connect(site, &site_recommend::windowclose,this,&MainWindow::show);
+    connect(site, &site_recommend::return_to_main_window, this, &MainWindow::show);
     site->show();
 }
 

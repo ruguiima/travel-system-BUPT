@@ -30,7 +30,7 @@ site_recommend::site_recommend(QWidget *parent)
     // 连接信号槽
 
     connect(ui->search_site,&QPushButton::clicked,this,&site_recommend::on_search_site_button_clicked);
-
+    connect(ui->return_button, &QPushButton::clicked,this, &site_recommend::on_return_button_clicked);
 
 }
 
@@ -38,6 +38,11 @@ site_recommend::~site_recommend()
 {
     delete ui;
     emit windowclose();
+}
+
+void site_recommend::on_return_button_clicked() {
+    emit return_to_main_window();  // 发射返回信号
+    this->hide();              // 隐藏当前窗口
 }
 
 void site_recommend::show_location(std::vector<location> locations)
