@@ -12,6 +12,7 @@
 #include "kmp_search.h"
 #include "top_k_algorithm.h"
 #include "tool_class/update_database.h"
+#include <sstream>
 
 
 namespace Ui {
@@ -46,9 +47,25 @@ private slots:
 
     void on_return_button_clicked();
 
+    void on_next_page_clicked();
+
+    void on_previous_page_clicked();
+
+    void updatePagination(bool keepPage = false);    // 更新分页数据和UI状态
+
+    void sort_locations(std::vector<location>& list);
+
 private:
     Ui::site_recommend *ui;
     QButtonGroup *button_group;
+    std::vector<location> allLocations;  // 全部数据（用于排序）
+    std::vector<location> pagedLocations; // 当前页数据
+    int currentPage=0;
+    int itemsPerPage=10;
+    int getTotalPages() const
+    {
+        return (locationlists.size() + itemsPerPage - 1) / itemsPerPage;
+    }
 };
 
 #endif // SITE_RECOMMEND_H
