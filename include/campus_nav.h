@@ -32,11 +32,12 @@ private slots:
 
     void on_pushButton_cur_clicked();
     void on_pushButton_search_clicked();
-    void on_pushButton_dest_clicked();
+    void on_pushButton_dest_clicked(QString place_name);
     void onDeleteButtonClicked();
     void on_pushButton_plan_clicked();
     void on_pushButton_nearby_clicked();
     void on_pushButton_route_clicked();
+    void onAddButtonClicked();
 
 private:
     Ui::campus_nav *ui;

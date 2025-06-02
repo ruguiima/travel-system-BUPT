@@ -2,7 +2,6 @@
 #include "ui_campus_nav.h"
 #include <QCompleter>
 #include <vector>
-#include "top_k_algorithm.h"
 #include <QMessageBox>
 #include <QPainter>
 
@@ -16,6 +15,12 @@ campus_nav::campus_nav(QWidget *parent)
     QString filename = ":/json/data/map_of_bupt.geojson";
     rp.load(filename);
     qDebug() << "Loaded map data success.";
+
+    ui->tableWidget_nearby->setHorizontalHeaderLabels(QStringList() << "场所名称" << "距离（m）" << "");
+    ui->tableWidget_nearby->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget_route->setHorizontalHeaderLabels(QStringList() << "途径点" << "已花费" << "交通方式");
+    ui->tableWidget_route->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
 
     QStringList nameList;
     for (size_t i = 0; i < rp.places.size(); ++i) {
@@ -31,7 +36,9 @@ campus_nav::campus_nav(QWidget *parent)
 
     rp.create_graph();
     qDebug() << "Created graph success.";
-
+    connect(ui->pushButton_dest, &QPushButton::clicked, this, [this](){
+    on_pushButton_dest_clicked(ui->lineEdit_end->text());
+    });
 }
 
 campus_nav::~campus_nav()
@@ -63,15 +70,9 @@ void campus_nav::on_pushButton_search_clicked()
         qDebug() << "Please select a current location first.";
         return;
     }
-    for(place& p : rp.places){
-        p.dist = calcu_length(rp.places[cur_loc].getLoct(), p.getLoct());
-    }
-    nearby = getTopK(rp.places, 80, [](const place &a, const place &b) {
-        return a.dist < b.dist;// Sort by distance
-    });
+    nearby = rp.search_place(cur_loc, ui->doubleSpinBox->value());
     std::vector<place> result;
     for (const place& p : nearby) {
-        if(p.dist > ui->doubleSpinBox->value()) break;
         if(p.dist == 0) continue;
         if (ui->comboBox_placeType->currentText() == "选择场所类型" || p.getType() == ui->comboBox_placeType->currentText()) {
             result.push_back(p);
@@ -85,22 +86,47 @@ void campus_nav::on_pushButton_search_clicked()
 
 void campus_nav::show_nearby(std::vector<place> result)
 {
+    // 清空表格内容
     ui->stackedWidget->setCurrentIndex(0);
-    ui->textEdit_nearby->clear();
-    ui->textEdit_nearby->append("附近场所：");
+    ui->tableWidget_nearby->clearContents();
+
     if (result.empty()) {
         qDebug() << "No nearby places found.";
-        ui->textEdit_nearby->append("没有找到附近的场所。");
-    }
-    for (const place& p : result) {
-        ui->textEdit_nearby->append(p.getName() + "    距离：" + QString::number(p.dist) + "m");
+        ui->tableWidget_nearby->setRowCount(1);
+        ui->tableWidget_nearby->setSpan(0, 0, 1, 3);
+        ui->tableWidget_nearby->setItem(0, 0, new QTableWidgetItem("没有找到附近的场所。"));
+    } else {
+        int row = 0;
+        ui->tableWidget_nearby->setRowCount(result.size());
+        for (const place& p : result) {
+            ui->tableWidget_nearby->setItem(row, 0, new QTableWidgetItem(p.getName()));
+            ui->tableWidget_nearby->setItem(row, 1, new QTableWidgetItem(QString::number(p.dist)));
+            QPushButton* addBtn = new QPushButton("添加");
+            ui->tableWidget_nearby->setCellWidget(row, 2, addBtn);
+
+            // 绑定按钮点击信号到槽函数
+            connect(addBtn, &QPushButton::clicked, this, &campus_nav::onAddButtonClicked);
+            row++;
+        }
     }
 }
 
+void campus_nav::onAddButtonClicked(){
+    QPushButton* button = qobject_cast<QPushButton*>(sender());
+    if (!button) return;
 
-void campus_nav::on_pushButton_dest_clicked()
+    // 遍历找到该按钮所在的行
+    for (int row = 0; row < ui->tableWidget_nearby->rowCount(); ++row) {
+        if (ui->tableWidget_nearby->cellWidget(row, 2) == button) {
+            on_pushButton_dest_clicked(ui->tableWidget_nearby->item(row, 0)->text());
+            break;
+        }
+    }
+}
+
+void campus_nav::on_pushButton_dest_clicked(QString place_name)
 {
-    if(place_name_to_id.find(ui->lineEdit_end->text()) == place_name_to_id.end()){
+    if(place_name_to_id.find(place_name) == place_name_to_id.end()){
         QMessageBox::warning(this, "", "未找到该位置，请检查输入是否正确");
         return;
     }
@@ -108,7 +134,7 @@ void campus_nav::on_pushButton_dest_clicked()
     ui->tableWidget->insertRow(row);
 
     // 添加名称项
-    QTableWidgetItem* item = new QTableWidgetItem(ui->lineEdit_end->text());
+    QTableWidgetItem* item = new QTableWidgetItem(place_name);
     ui->tableWidget->setItem(row, 0, item);
 
     // 添加删除按钮
@@ -147,41 +173,37 @@ void campus_nav::on_pushButton_plan_clicked()
     }
 
     ui->stackedWidget->setCurrentIndex(1);
-    ui->textEdit_route->clear();
+    ui->tableWidget_route->clearContents();
     std::vector<place_info> record;
 
     QString strategy = ui->comboBox_strategy->currentText();
     double dist;
     if(strategy == "距离最短"){
         dist = route_plan::shortest_path(cur_loc, dest_id, rp.graph_d, record);
-        ui->textEdit_route->append("最短距离:" + QString::number(dist) + "m");
-        ui->textEdit_route->append("路径详情：");
-        for (const auto &p : record){
-            ui->textEdit_route->append("下一途径点：" + rp.places[p.getId()].getName() + " 总路程："
-                                       + QString::number(p.getWeight()) + "m");
-        }
+        ui->lineEdit->setText("总距离:" + QString::number(dist) + "m");
     }
     else if(strategy == "步行时间最短"){
         dist = route_plan::shortest_path(cur_loc, dest_id, rp.graph_t, record);
-        ui->textEdit_route->append("最短用时:" + QString::number(dist) + "s");
-        ui->textEdit_route->append("路径详情：");
-        for (const auto &p : record){
-            ui->textEdit_route->append("下一途径点：" + rp.places[p.getId()].getName() + " 共用时："
-                                       + QString::number(p.getWeight()) + "s");
-        }
+        ui->lineEdit->setText("总用时:" + QString::number(dist) + "s");
     }
     else if(strategy == "混合交通工具时间最短"){
         dist = route_plan::shortest_path(cur_loc, dest_id, rp.graph_m, record);
-        ui->textEdit_route->append("最短用时:" + QString::number(dist) + "s");
-        ui->textEdit_route->append("路径详情：");
-        for (const auto &p : record){
-            ui->textEdit_route->append("下一途径点：" + rp.places[p.getId()].getName() + " 共用时："
-                                       + QString::number(p.getWeight()) + "s 方式："
-                                        + (p.getType() == cycleway ? "自行车道" : "人行道") );
-        }
+        ui->lineEdit->setText("总用时:" + QString::number(dist) + "s");
     } else {
         qDebug() << "Unknown strategy: " << strategy;
         return;
+    }
+
+    int row = 0;
+    ui->tableWidget_route->setRowCount(record.size());
+    for (const auto &p : record){
+        QTableWidgetItem* nameItem = new QTableWidgetItem(rp.places[p.getId()].getName());
+        ui->tableWidget_route->setItem(row, 0, nameItem);
+        QTableWidgetItem* weightItem = new QTableWidgetItem(QString::number(p.getWeight()));
+        ui->tableWidget_route->setItem(row, 1, weightItem);
+        QTableWidgetItem* typeItem = new QTableWidgetItem(p.getType() == cycleway ? "自行车" : "步行");
+        ui->tableWidget_route->setItem(row, 2, typeItem);
+        row++;
     }
 
     placesToDraw.clear();

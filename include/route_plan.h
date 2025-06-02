@@ -16,7 +16,10 @@ public:
     void load(QString file_path);
     void create_graph();
     void put_path();
-    static double shortest_path(int start, const std::vector<int>& end, std::vector< std::vector<place_info> >& graph, std::vector<place_info>& record);
+    static double shortest_path(int start, const std::vector<int>& end, 
+                                std::vector< std::vector<place_info> >& graph, 
+                                std::vector<place_info>& record);
+    std::vector<place> search_place(int start, double max_dist);
 
 
 

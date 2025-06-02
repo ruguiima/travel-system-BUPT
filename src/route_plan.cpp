@@ -118,7 +118,8 @@ void route_plan::put_path() {
 }
 
 
-double route_plan::shortest_path(int start, const vector<int>& end, vector<vector<place_info>>& graph, vector<place_info>& record){
+double route_plan::shortest_path(int start, const vector<int>& end, 
+                                vector<vector<place_info>>& graph, vector<place_info>& record){
     const double INF = numeric_limits<double>::max();
     int cur = start;
     double all_dist = 0;
@@ -169,4 +170,37 @@ next:
         all_dist += dist[cur];
     }
     return all_dist;
+}
+
+vector<place> route_plan::search_place(int start, double max_dist) {
+    const double INF = numeric_limits<double>::max();
+    vector<place> result;
+    vector<double> dist(graph_d.size(), INF);
+
+    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
+    dist[start] = 0;
+    pq.push({0, start});
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+        if (d > max_dist) break; // Stop if the distance exceeds max_dist
+        
+        if (d > dist[u]) continue;
+        else{  
+            places[u].dist = d; // Store the distance in the place object
+            result.push_back(places[u]);
+        }
+
+
+        for (const auto &neighbor : graph_d[u]) {
+            int v = neighbor.getId();
+            double weight = neighbor.getWeight();
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return result;
 }
