@@ -37,7 +37,7 @@ signals:
     void return_to_main_window();
 
 private slots:
-    void choose_sort_model();
+    void sort_site();
 
     void show_location(std::vector<location> locations);
 
@@ -53,12 +53,9 @@ private slots:
 
     void updatePagination(bool keepPage = false);    // 更新分页数据和UI状态
 
-    void sort_locations(std::vector<location>& list);
-
 private:
     Ui::site_recommend *ui;
     QButtonGroup *button_group;
-    std::vector<location> allLocations;  // 全部数据（用于排序）
     std::vector<location> pagedLocations; // 当前页数据
     int currentPage=0;
     int itemsPerPage=10;

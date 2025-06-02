@@ -15,9 +15,6 @@ site_recommend::site_recommend(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle("景点推荐");
 
-    this->allLocations = read_data::getInstance().read_location_data();
-    this->locationlists = this->allLocations;  // 保持兼容原有代码
-
     // 设置按钮组
     this->locations = read_data::getInstance().read_location_data();
     this->locationlists=this->locations;
@@ -30,7 +27,7 @@ site_recommend::site_recommend(QWidget *parent)
     button_group->addButton(ui->trip_button);
     button_group->setExclusive(true);
     ui->trip_button->setChecked(true);
-    connect(button_group,&QButtonGroup::buttonClicked,this,&site_recommend::choose_sort_model);
+    connect(button_group,&QButtonGroup::buttonClicked,this,&site_recommend::sort_site);
     emit button_group->buttonClicked(button_group->checkedButton());
     qDebug() << "景点推荐界面加载完成";
 
@@ -175,14 +172,14 @@ void site_recommend::on_search_site_button_clicked()
     }
 
     try {
-        auto results = search_site(searchText.toStdString(), allLocations);
+        auto results = search_site(searchText.toStdString(), locations);
 
         if(results.empty()) {
             QMessageBox::information(this, "提示", "未找到匹配景点");
         }
 
         locationlists = results;
-        sort_locations(locationlists);   // 只排序搜索结果，不影响全量
+        sort_site();   // 只排序搜索结果，不影响全量
         updatePagination();
 
     } catch(const std::exception &e) {
@@ -193,40 +190,40 @@ void site_recommend::on_search_site_button_clicked()
 }
 
 
-void site_recommend::choose_sort_model()
+void site_recommend::sort_site()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    int totalItems = allLocations.size();
+    int totalItems = locationlists.size();
     QString str = button_group->checkedButton()->text();
 
     if(!str.compare("按学习分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.study > b.study;
         });
     }
     else if(!str.compare("按美食分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.food > b.food;
         });
     }
     else if(!str.compare("按旅游分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.trip > b.trip;
         });
     }
     else if(!str.compare("按运动分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.sport > b.sport;
         });
     }
     else if(!str.compare("按热度分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.popularity > b.popularity;
         });
     }
     else if(!str.compare("按评分分数排序")) {
-        locationlists = getTopK(allLocations, totalItems, [](const location &a, const location &b) {
+        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.score > b.score;
         });
     }
@@ -239,8 +236,8 @@ void site_recommend::choose_sort_model()
 void site_recommend::on_refresh_button_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    allLocations = read_data::getInstance().read_location_data();
-    locationlists = allLocations;
+    locationlists = locations;
+    sort_site();
     updatePagination();
     QApplication::restoreOverrideCursor();
 }
@@ -273,40 +270,4 @@ void site_recommend::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
 }
 
-
-void site_recommend::sort_locations(std::vector<location>& list)    //点击查找景点后提取排序结果
-{
-    QString str = button_group->checkedButton()->text();
-
-    if(!str.compare("按学习分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.study > b.study;
-        });
-    }
-    else if(!str.compare("按美食分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.food > b.food;
-        });
-    }
-    else if(!str.compare("按旅游分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.trip > b.trip;
-        });
-    }
-    else if(!str.compare("按运动分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.sport > b.sport;
-        });
-    }
-    else if(!str.compare("按热度分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.popularity > b.popularity;
-        });
-    }
-    else if(!str.compare("按评分分数排序")) {
-        std::sort(list.begin(), list.end(), [](const location &a, const location &b) {
-            return a.score > b.score;
-        });
-    }
-}
 
