@@ -35,6 +35,7 @@ public:
     std::vector<diary> search_title(const std::string str, std::vector<diary> diarys);
     std::vector<diary> search_site(const std::string str, std::vector<diary> diarys, std::vector<location> locations);
     void closeEvent(QCloseEvent *event) override;
+    void updatePagination(bool keepPage = false);
 
 signals:
     void windowclose();
@@ -55,12 +56,24 @@ private slots:
 
     void on_load_local_diary_clicked();
 
+    void on_previous_page_clicked();
+
+    void on_next_page_clicked();
+
 private:
     Ui::diarywindow *ui;
     user u;
     QButtonGroup *button_grooup;
     writewidget *write_widget;
     location_choose *location_choose_widget;
+    bool keepPage;
+    int currentPage=0;
+    int itemsPerPage = 10;
+    std::vector<diary> pagedDiarys; // 当前页数据
+    int getTotalPages() const
+    {
+        return (diarylist.size() + itemsPerPage - 1) / itemsPerPage;
+    }
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
