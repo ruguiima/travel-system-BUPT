@@ -13,6 +13,7 @@ diaryread::diaryread(diary info, QWidget *parent)
     this->info = info;
     ui->setupUi(this);
     this->setWindowTitle("正在浏览日志");
+    ui->context_search->setPlaceholderText("请输入搜索内容");
 
     QString html = QString("<div style='line-height:150%;'>%1</div>").arg(QString::fromStdString(info.context));
     ui->context->setHtml(html);
@@ -104,7 +105,7 @@ void diaryread::closeEvent(QCloseEvent *event) {
 
 void diaryread::on_searchbutton_clicked()
 {
-    QString str = ui->context_search->toPlainText();
+    QString str = ui->context_search->text();
     if(!KMP::kmpMatch(info.context, str.toStdString())){
         QMessageBox::warning(this, "失败", "没有搜索到对应内容");
         ui->context->setText(QString::fromStdString(info.context));
