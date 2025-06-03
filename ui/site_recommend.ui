@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>480</height>
+    <width>819</width>
+    <height>526</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,7 +25,7 @@
      <x>120</x>
      <y>60</y>
      <width>661</width>
-     <height>341</height>
+     <height>391</height>
     </rect>
    </property>
   </widget>
@@ -149,8 +149,8 @@
   <widget class="QPushButton" name="previous_page">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>410</y>
+     <x>110</x>
+     <y>470</y>
      <width>121</width>
      <height>41</height>
     </rect>
@@ -162,8 +162,8 @@
   <widget class="QPushButton" name="next_page">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>410</y>
+     <x>630</x>
+     <y>470</y>
      <width>141</width>
      <height>41</height>
     </rect>
@@ -175,8 +175,8 @@
   <widget class="QLabel" name="page_label">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>410</y>
+     <x>330</x>
+     <y>470</y>
      <width>211</width>
      <height>41</height>
     </rect>

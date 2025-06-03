@@ -26,11 +26,16 @@ class site_recommend : public QWidget
 public:
     std::vector<location> locations;
     std::vector<location> locationlists;
+    std::vector<location> topklocations;
     std::vector<location> search_site(const std::string str, std::vector<location> locations);
 
     explicit site_recommend(QWidget *parent = nullptr);
     ~site_recommend();
     void closeEvent(QCloseEvent *event) override;
+    void changeBool(){
+        topkuse = true;
+        qDebug() << "topkuse = true";
+    }
 
 signals:
     void windowclose();
@@ -59,6 +64,7 @@ private:
     std::vector<location> pagedLocations; // 当前页数据
     int currentPage=0;
     int itemsPerPage=10;
+    bool topkuse = true;
     int getTotalPages() const
     {
         return (locationlists.size() + itemsPerPage - 1) / itemsPerPage;

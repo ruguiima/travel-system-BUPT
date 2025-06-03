@@ -41,7 +41,7 @@ site_recommend::site_recommend(QWidget *parent)
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setFilterMode(Qt::MatchContains);
     ui->search_line->setCompleter(completer);
-
+    connect(button_group,&QButtonGroup::buttonClicked,this,&site_recommend::changeBool);
     connect(button_group,&QButtonGroup::buttonClicked,this,&site_recommend::sort_site);
     emit button_group->buttonClicked(button_group->checkedButton());
     qDebug() << "景点推荐界面加载完成";
@@ -50,8 +50,6 @@ site_recommend::site_recommend(QWidget *parent)
 
     connect(ui->search_site,&QPushButton::clicked,this,&site_recommend::on_search_site_button_clicked);
     connect(ui->return_button, &QPushButton::clicked,this, &site_recommend::on_return_button_clicked);
-
-    updatePagination();
 
 }
 
@@ -93,11 +91,11 @@ void site_recommend::updatePagination(bool keepPage)
     int endIdx = std::min(startIdx + itemsPerPage, (int)locationlists.size());
 
     qDebug() << "分页范围:" << startIdx << "-" << endIdx;
-
+    qDebug() << "now topklocations size is:" << topklocations.size();
     pagedLocations.clear();
     if (startIdx < locationlists.size()) {
-        pagedLocations.assign(locationlists.begin() + startIdx,
-                              locationlists.begin() + endIdx);
+        pagedLocations.assign(topklocations.begin() + startIdx,
+                              topklocations.begin() + endIdx);
     }
 
     // 更新显示
@@ -113,13 +111,29 @@ void site_recommend::updatePagination(bool keepPage)
 }
 void site_recommend::on_next_page_clicked()
 {
+    if(topkuse){
+        topklocations = locationlists;
+        topkuse = false;
+        qDebug() << "点击下一页前 - 当前页:" << currentPage;
+
+        int totalPages = getTotalPages();
+        if (currentPage + 1 < totalPages) {
+            currentPage++;
+            qDebug() << "下一页有效跳转 - 新页码:" << currentPage;
+        } else {
+            qDebug() << "已是最后一页，无法继续下一页";
+        }
+        sort_site();
+        qDebug() << "获取全排序";
+        return;
+    }
     qDebug() << "点击下一页前 - 当前页:" << currentPage;
 
     int totalPages = getTotalPages();
     if (currentPage + 1 < totalPages) {
         currentPage++;
         qDebug() << "下一页有效跳转 - 新页码:" << currentPage;
-        updatePagination(true);
+        updatePagination(!topkuse);
     } else {
         qDebug() << "已是最后一页，无法继续下一页";
     }
@@ -132,7 +146,7 @@ void site_recommend::on_previous_page_clicked()
     if (currentPage > 0) {
         currentPage--;
         qDebug() << "上一页有效跳转 - 新页码:" << currentPage;
-        updatePagination(true);
+        updatePagination(!topkuse);
     } else {
         qDebug() << "已是第一页，无法继续上一页";
     }
@@ -194,8 +208,7 @@ void site_recommend::on_search_site_button_clicked()
         }
 
         locationlists = results;
-        sort_site();   // 只排序搜索结果，不影响全量
-        updatePagination();
+        emit button_group->buttonClicked(button_group->checkedButton());
 
     } catch(const std::exception &e) {
         qCritical() << "搜索出错:" << e.what();
@@ -211,39 +224,41 @@ void site_recommend::sort_site()
 
     int totalItems = locationlists.size();
     QString str = button_group->checkedButton()->text();
-
+    if(topkuse){
+        qDebug() << "此时仅排序出前十个";
+        totalItems = 10;
+    }
     if(!str.compare("按学习分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.study > b.study;
         });
     }
     else if(!str.compare("按美食分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.food > b.food;
         });
     }
     else if(!str.compare("按旅游分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.trip > b.trip;
         });
     }
     else if(!str.compare("按运动分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.sport > b.sport;
         });
     }
     else if(!str.compare("按热度分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.popularity > b.popularity;
         });
     }
     else if(!str.compare("按评分分数排序")) {
-        locationlists = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
+        topklocations = getTopK(locationlists, totalItems, [](const location &a, const location &b) {
             return a.score > b.score;
         });
     }
-
-    updatePagination(true);
+    updatePagination(!topkuse);
     QApplication::restoreOverrideCursor();
 }
 
@@ -252,8 +267,7 @@ void site_recommend::on_refresh_button_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     locationlists = locations;
-    sort_site();
-    updatePagination();
+    emit button_group->buttonClicked(button_group->checkedButton());
     QApplication::restoreOverrideCursor();
 }
 
@@ -291,4 +305,3 @@ bool site_recommend::eventFilter(QObject *obj, QEvent *event) {
     }
     return QWidget::eventFilter(obj, event); // 保留默认行为
 }
-
