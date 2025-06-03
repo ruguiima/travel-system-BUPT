@@ -137,7 +137,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>请输入搜索内容</string>
+    <string/>
    </property>
   </widget>
   <widget class="QPushButton" name="next_page">

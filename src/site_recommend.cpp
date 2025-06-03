@@ -1,5 +1,6 @@
 #include "site_recommend.h"
 #include "ui_site_recommend.h"
+#include "diarywindow.h"
 #include "tool_class/read_data.h"
 #include "kmp_search.h"
 #include "top_k_algorithm.h"
@@ -7,9 +8,10 @@
 #include <QtWidgets/QMessageBox>
 #include <QCompleter>
 
-site_recommend::site_recommend(QWidget *parent)
+site_recommend::site_recommend(user u, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::site_recommend)
+    , u(u)
     , currentPage(0)
     , itemsPerPage(10)
 {
@@ -27,11 +29,10 @@ site_recommend::site_recommend(QWidget *parent)
     button_group->addButton(ui->study_button);
     button_group->addButton(ui->trip_button);
     button_group->setExclusive(true);
-    ui->trip_button->setChecked(true);
+    ui->heat_button->setChecked(true);
 
+    ui->search_line->setPlaceholderText("请输入搜索内容");
     ui->locationLists->setSpacing(8);
-    ui->locationLists->setFocus();
-    ui->search_line->installEventFilter(this);
 
     QStringList nameList;
     for (auto l : locations)  {
@@ -83,8 +84,8 @@ void site_recommend::updatePagination(bool keepPage)
     qDebug() << "总页数:" << totalPages;
 
     // 更新按钮状态
-    ui->previous_page->setEnabled(currentPage > 0);
-    ui->next_page->setEnabled(currentPage < totalPages - 1);
+    ui->previous_page->setEnabled(currentPage > 0 && !topkuse);
+    ui->next_page->setEnabled(currentPage < totalPages - 1 && !topkuse);
 
     // 获取分页数据
     int startIdx = currentPage * itemsPerPage;
@@ -100,33 +101,21 @@ void site_recommend::updatePagination(bool keepPage)
 
     // 更新显示
     show_location(pagedLocations);
-    ui->page_label->setText(
-        QString("第 %1 页/共 %2 页 (共%3条)")
-            .arg(currentPage + 1)
-            .arg(totalPages)
-            .arg(locationlists.size())
-        );
+    if(!topkuse){
+        ui->page_label->setText(
+            QString("第 %1 页/共 %2 页 (共%3条)")
+                .arg(currentPage + 1)
+                .arg(totalPages)
+                .arg(locationlists.size())
+            );
+    } else {
+        ui->page_label->clear();
+    }
 
     qDebug() << "---- 分页更新完成 ----\n";
 }
 void site_recommend::on_next_page_clicked()
 {
-    if(topkuse){
-        topklocations = locationlists;
-        topkuse = false;
-        qDebug() << "点击下一页前 - 当前页:" << currentPage;
-
-        int totalPages = getTotalPages();
-        if (currentPage + 1 < totalPages) {
-            currentPage++;
-            qDebug() << "下一页有效跳转 - 新页码:" << currentPage;
-        } else {
-            qDebug() << "已是最后一页，无法继续下一页";
-        }
-        sort_site();
-        qDebug() << "获取全排序";
-        return;
-    }
     qDebug() << "点击下一页前 - 当前页:" << currentPage;
 
     int totalPages = getTotalPages();
@@ -299,9 +288,18 @@ void site_recommend::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
 }
 
-bool site_recommend::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == ui->search_line && event->type() == QEvent::FocusIn) {
-        ui->search_line->clear();
-    }
-    return QWidget::eventFilter(obj, event); // 保留默认行为
+void site_recommend::on_pushButton_clicked()
+{
+    topklocations = locationlists;
+    topkuse = false;
+    sort_site();
 }
+
+
+void site_recommend::on_locationLists_itemActivated(QListWidgetItem *item)
+{
+    std::string title = item->data(Qt::UserRole).value<location>().title;
+    diarywindow *dw = new diarywindow(u, QString::fromStdString(title));
+    dw->show();
+}
+

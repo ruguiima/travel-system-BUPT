@@ -30,6 +30,7 @@ public:
     std::vector<diary> diarylist;
     std::vector<location> locations;
     explicit diarywindow(user u, QWidget *parent = nullptr);
+    explicit diarywindow(user u, QString search_content, QWidget *parent = nullptr);
     ~diarywindow();
     void show_diary(std::vector<diary> diarys);
     std::vector<diary> search_title(const std::string str, std::vector<diary> diarys);
@@ -74,9 +75,6 @@ private:
     {
         return (diarylist.size() + itemsPerPage - 1) / itemsPerPage;
     }
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif // DIARYWINDOW_H

@@ -17,20 +17,19 @@ diarywindow::diarywindow(user u, QWidget *parent)
     button_grooup->addButton(ui->popularityorder);
     button_grooup->addButton(ui->mainsort);
     button_grooup->setExclusive(true);
-
     ui->diaryslist->setSpacing(8);
-    ui->diaryslist->setFocus();
-    ui->searchbar->installEventFilter(this);
+
+    ui->searchbar->setPlaceholderText("请输入搜索内容");
 
     this->locations = read_data::getInstance().read_location_data();
     this->diarys = read_data::getInstance().read_diary_data();
     this->diarylist = this->diarys;
 
     QSet<QString> nameSet;
-    for (auto l : locations)  {
+    for (const auto& l : locations)  {
         nameSet.insert(QString::fromStdString(l.title));
     }
-    for (auto d : diarys)  {
+    for (const auto& d : diarys)  {
         nameSet.insert(QString::fromStdString(d.title));
     }
     QStringList nameList = nameSet.values();
@@ -43,6 +42,12 @@ diarywindow::diarywindow(user u, QWidget *parent)
     connect(button_grooup, &QButtonGroup::buttonClicked, this, &diarywindow::choose_sort_model);
     emit button_grooup->buttonClicked(button_grooup->checkedButton());
     qDebug() << "日记页面加载完成";
+}
+
+diarywindow::diarywindow(user u, QString search_content, QWidget *parent)
+    : diarywindow(u, parent){
+    ui->searchbar->setText(search_content);
+    on_sitesearch_clicked();
 }
 
 diarywindow::~diarywindow()
@@ -113,7 +118,7 @@ void diarywindow::show_diary(std::vector<diary> diarys)             //日记列�
         return;
     }
     // QVBoxLayout *layout = new QVBoxLayout(ui->diaryslist);
-    for(diary d : diarys){
+    for(const diary& d : diarys){
         std::ostringstream oss;
 
         // 设置输出格式
@@ -204,15 +209,6 @@ void diarywindow::on_load_local_diary_clicked()
 void diarywindow::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
 }
-
-bool diarywindow::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == ui->searchbar && event->type() == QEvent::FocusIn) {
-        ui->searchbar->clear();
-    }
-    return QWidget::eventFilter(obj, event); // 保留默认行为
-}
-
-
 //page
 void diarywindow::on_next_page_clicked()
 {

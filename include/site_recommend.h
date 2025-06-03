@@ -29,7 +29,7 @@ public:
     std::vector<location> topklocations;
     std::vector<location> search_site(const std::string str, std::vector<location> locations);
 
-    explicit site_recommend(QWidget *parent = nullptr);
+    explicit site_recommend(user u, QWidget *parent = nullptr);
     ~site_recommend();
     void closeEvent(QCloseEvent *event) override;
     void changeBool(){
@@ -58,8 +58,13 @@ private slots:
 
     void updatePagination(bool keepPage = false);    // 更新分页数据和UI状态
 
+    void on_pushButton_clicked();
+
+    void on_locationLists_itemActivated(QListWidgetItem *item);
+
 private:
     Ui::site_recommend *ui;
+    user u;
     QButtonGroup *button_group;
     std::vector<location> pagedLocations; // 当前页数据
     int currentPage=0;
@@ -69,9 +74,6 @@ private:
     {
         return (locationlists.size() + itemsPerPage - 1) / itemsPerPage;
     }
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif // SITE_RECOMMEND_H
