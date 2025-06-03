@@ -57,3 +57,14 @@ void update_database::insert_data()
     model.insertRecord(-1, record);
     model.submitAll();
 }
+
+void update_database::insert_user_data(user u){
+    QSqlTableModel model;
+    model.setTable("User");
+    model.select();
+    QSqlRecord record = model.record();
+    record.setValue("account", QString::fromStdString(u.account));
+    record.setValue("password", QString::fromStdString(u.password));
+    model.insertRecord(-1, record);
+    model.submitAll();
+}

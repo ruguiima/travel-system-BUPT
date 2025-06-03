@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/register_widget.cpp \
     src/site_recommend.cpp \
     src/campus_nav.cpp \
     src/database_connection.cpp \
@@ -45,9 +46,11 @@ HEADERS += \
     include/tool_class/update_database.h \
     include/login_widget.h \
     include/top_k_algorithm.h \
-    include/site_recommend.h
+    include/site_recommend.h \
+    include/register_widget.h
 
 FORMS += \
+    ui/register_widget.ui \
     ui/site_recommend.ui \
     ui/campus_nav.ui \
     ui/login_widget.ui \

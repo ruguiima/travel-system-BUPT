@@ -8,6 +8,7 @@
 #include <QtSql/QSqlRecord>
 #include "simple_class/diary.h"
 #include "database_connection.h"
+#include "simple_class/user.h"
 
 class update_database
 {
@@ -17,6 +18,7 @@ public:
     void update_data();
     void insert_data();
     void change_data();
+    void insert_user_data(user u);
 
 private:
     QSqlDatabase db;

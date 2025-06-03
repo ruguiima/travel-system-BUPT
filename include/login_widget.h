@@ -5,6 +5,7 @@
 #include "simple_class/user.h"
 #include "tool_class/read_data.h"
 #include <QMessageBox>
+#include "register_widget.h"
 
 namespace Ui {
 class login_widget;
@@ -23,6 +24,8 @@ signals:
 
 private slots:
     void on_loginbutton_clicked();
+
+    void on_registerbutton_clicked();
 
 private:
     Ui::login_widget *ui;

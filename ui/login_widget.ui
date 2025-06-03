@@ -32,7 +32,7 @@
      <x>30</x>
      <y>120</y>
      <width>301</width>
-     <height>71</height>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -69,6 +69,19 @@
    </property>
    <property name="text">
     <string>登录</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="registerbutton">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>260</y>
+     <width>88</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>注册</string>
    </property>
   </widget>
  </widget>
