@@ -3,6 +3,7 @@
 #include "kmp_search.h"
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QAbstractTextDocumentLayout>
 
 diaryread::diaryread(diary info, QWidget *parent)
     : QWidget(parent)
@@ -12,7 +13,10 @@ diaryread::diaryread(diary info, QWidget *parent)
     this->info = info;
     ui->setupUi(this);
     this->setWindowTitle("正在浏览日志");
-    ui->context->setText(QString::fromStdString(info.context));
+
+    QString html = QString("<div style='line-height:150%;'>%1</div>").arg(QString::fromStdString(info.context));
+    ui->context->setHtml(html);
+
     ui->title->setText(QString::fromStdString(info.title));
     ui->author->setText("作者：" + QString::fromStdString(info.author_name));
     ui->score->setText("评分：" + QString::number(info.score));
@@ -29,14 +33,43 @@ diaryread::diaryread(diary info, QWidget *parent)
     QLabel *image = new QLabel();
     if(info.image_path.compare("0")){
         qDebug() << "图片输出" ;
-        QPixmap px(QString::fromStdString(info.image_path)); 
-        image->setPixmap(px.scaledToWidth(ui->scrollArea->viewport()->width(), Qt::SmoothTransformation)); // 调整图像宽度
+        QPixmap px(QString::fromStdString(info.image_path));
+        const int maxWidth = 400;   // 最大宽度不超过视口宽度
+        const int minWidth = 20;              // 最小宽度不低于200像素
+
+        // 计算缩放宽度
+        int targetWidth = px.width();
+
+        // 缩放逻辑：限制宽度范围
+        if (targetWidth > maxWidth) {
+            targetWidth = maxWidth;
+        } else if (targetWidth < minWidth) {
+            targetWidth = minWidth;
+        }
+
+        // 按比例缩放，保持高宽比
+        QPixmap scaledPx = px.scaledToWidth(targetWidth, Qt::SmoothTransformation);
+
+        // 设置图片
+        image->setPixmap(scaledPx);
+
+        ui->context->document()->setTextWidth(ui->scrollArea->width()); // 设置文本宽度，减去padding);
+        // 获取文档内容的实际大小（包含换行后的高度）
+        QSizeF docSize = ui->context->document()->documentLayout()->documentSize();
+        int height = static_cast<int>(docSize.height()) + 10;  // 加点padding防止裁剪
+
+        // 限制最大高度，避免撑破界面
+        int maxHeight = 300;
+        height = std::min(std::max(height, ui->scrollArea->height() - scaledPx.height() - 50), maxHeight);
+
+        // 设置控件高度
+        ui->context->setFixedHeight(height);
     }
     else
         image->hide();
     QWidget *contentWidget = new QWidget();
     ui->scrolllayout->addWidget(ui->context);
-    ui->scrolllayout->addWidget(image);
+    ui->scrolllayout->addWidget(image, 0, Qt::AlignHCenter);
     contentWidget->setLayout(ui->scrolllayout);
     ui->scrollArea->setWidget(contentWidget);
 }

@@ -63,6 +63,9 @@ private:
     {
         return (locationlists.size() + itemsPerPage - 1) / itemsPerPage;
     }
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif // SITE_RECOMMEND_H

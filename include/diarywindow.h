@@ -61,6 +61,9 @@ private:
     QButtonGroup *button_grooup;
     writewidget *write_widget;
     location_choose *location_choose_widget;
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #endif // DIARYWINDOW_H

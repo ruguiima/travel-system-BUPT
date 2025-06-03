@@ -3,6 +3,7 @@
 #include "tool_class/read_data.h"
 #include "kmp_search.h"
 #include "top_k_algorithm.h"
+#include <QCompleter>
 
 diarywindow::diarywindow(user u, QWidget *parent)
     : QWidget(parent)
@@ -16,9 +17,28 @@ diarywindow::diarywindow(user u, QWidget *parent)
     button_grooup->addButton(ui->popularityorder);
     button_grooup->addButton(ui->mainsort);
     button_grooup->setExclusive(true);
+
+    ui->diaryslist->setSpacing(8);
+    ui->diaryslist->setFocus();
+    ui->searchbar->installEventFilter(this);
+
     this->locations = read_data::getInstance().read_location_data();
     this->diarys = read_data::getInstance().read_diary_data();
     this->diarylist = this->diarys;
+
+    QSet<QString> nameSet;
+    for (auto l : locations)  {
+        nameSet.insert(QString::fromStdString(l.title));
+    }
+    for (auto d : diarys)  {
+        nameSet.insert(QString::fromStdString(d.title));
+    }
+    QStringList nameList = nameSet.values();
+    QCompleter *completer = new QCompleter(nameList, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchContains);
+    ui->searchbar->setCompleter(completer);
+
     ui->mainsort->setChecked(true);
     connect(button_grooup, &QButtonGroup::buttonClicked, this, &diarywindow::choose_sort_model);
     emit button_grooup->buttonClicked(button_grooup->checkedButton());
@@ -103,14 +123,14 @@ void diarywindow::show_diary(std::vector<diary> diarys)             //日记列�
 
 void diarywindow::on_sitesearch_clicked()
 {
-    this->diarylist = search_site(ui->searchbar->toPlainText().toStdString(), diarys, locations);
+    this->diarylist = search_site(ui->searchbar->text().toStdString(), diarys, locations);
     emit button_grooup->buttonClicked(button_grooup->checkedButton());
 }
 
 
 void diarywindow::on_titlesearch_clicked()
 {
-    this->diarylist = search_title(ui->searchbar->toPlainText().toStdString(), diarys);
+    this->diarylist = search_title(ui->searchbar->text().toStdString(), diarys);
     emit button_grooup->buttonClicked(button_grooup->checkedButton());
 }
 
@@ -180,3 +200,9 @@ void diarywindow::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
 }
 
+bool diarywindow::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == ui->searchbar && event->type() == QEvent::FocusIn) {
+        ui->searchbar->clear();
+    }
+    return QWidget::eventFilter(obj, event); // 保留默认行为
+}

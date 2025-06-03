@@ -5,6 +5,7 @@
 #include "top_k_algorithm.h"
 #include <iomanip>
 #include <QtWidgets/QMessageBox>
+#include <QCompleter>
 
 site_recommend::site_recommend(QWidget *parent)
     : QWidget(parent)
@@ -27,6 +28,20 @@ site_recommend::site_recommend(QWidget *parent)
     button_group->addButton(ui->trip_button);
     button_group->setExclusive(true);
     ui->trip_button->setChecked(true);
+
+    ui->locationLists->setSpacing(8);
+    ui->locationLists->setFocus();
+    ui->search_line->installEventFilter(this);
+
+    QStringList nameList;
+    for (auto l : locations)  {
+        nameList.append(QString::fromStdString(l.title));
+    }
+    QCompleter *completer = new QCompleter(nameList, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchContains);
+    ui->search_line->setCompleter(completer);
+
     connect(button_group,&QButtonGroup::buttonClicked,this,&site_recommend::sort_site);
     emit button_group->buttonClicked(button_group->checkedButton());
     qDebug() << "景点推荐界面加载完成";
@@ -164,7 +179,7 @@ void site_recommend::show_location(std::vector<location> locations)
 
 void site_recommend::on_search_site_button_clicked()
 {
-    QString searchText = ui->search_line->toPlainText().trimmed();
+    QString searchText = ui->search_line->text();
 
     if(searchText.isEmpty()) {
         QMessageBox::information(this, "提示", "请输入搜索关键词");
@@ -270,4 +285,10 @@ void site_recommend::closeEvent(QCloseEvent *event) {
     emit windowclose(); // 发出信号
 }
 
+bool site_recommend::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == ui->search_line && event->type() == QEvent::FocusIn) {
+        ui->search_line->clear();
+    }
+    return QWidget::eventFilter(obj, event); // 保留默认行为
+}
 
