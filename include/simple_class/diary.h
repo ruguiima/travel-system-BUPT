@@ -5,7 +5,7 @@
 class diary
 {
 public:
-    int id;
+    int id;                  //
     std::string title;
     std::string context;
     int site_id;
