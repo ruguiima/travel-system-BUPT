@@ -35,7 +35,7 @@ site_recommend::site_recommend(user u, QWidget *parent)
     ui->locationLists->setSpacing(8);
 
     QStringList nameList;
-    for (auto l : locations)  {
+    for (const auto& l : locations)  {
         nameList.append(QString::fromStdString(l.title));
     }
     QCompleter *completer = new QCompleter(nameList, this);
