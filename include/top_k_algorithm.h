@@ -50,11 +50,12 @@ private:
 public:
     my_pq(criteria cmp) : cmp(cmp) {}
 
+    // 插入元素到堆中
     void push(const T& item) {
         heap.push_back(item);
         sift_up(heap.size() - 1);  // 上浮操作
     }
-
+    // 弹出堆顶元素
     void pop() {
         if (heap.empty()) return;
         std::swap(heap.front(), heap.back());
@@ -63,11 +64,11 @@ public:
             sift_down(0);  // 下沉操作
         }
     }
-
+    // 获取堆顶元素
     const T& top() const {
         return heap.front();
     }
-
+    // 堆判空
     bool empty() const {
         return heap.empty();
     }
