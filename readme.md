@@ -89,8 +89,9 @@
 ### 环境要求
 - Qt Creator（推荐使用 Qt 6.8.3）
 - C++17 编译器（如 MSVC, MinGW）
-- MySQL 数据库（需提前部署，初始化表结构）
-
+- 动态库及插件：可从 [qt_mysql_driver Releases](https://github.com/thecodemonkey86/qt_mysql_driver/releases) 下载对应版本和编译器的预编译插件
+  - 将 `libmysql.dll`、`libcrypto-3-x64.dll`、`libssl-3-x64.dll` 放置于 Qt 安装目录下的 `bin` 目录，如`your/path/to/Qt/VERSION/COMPILER/bin`
+  -  将 `qsqlmysql.dll`、`qsqlmysql.debug`放置于 Qt 安装目录下的 `plugins/sqldrivers` 目录，如`your/path/to/Qt/VERSION/COMPILER/plugins/sqldrivers`
 ### 编译方式（使用 Qt Creator）
 1. 打开 `travel-system.pro` 工程文件
 2. 更改运行工作目录为项目根目录
