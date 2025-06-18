@@ -1,11 +1,16 @@
 #include "database_connection.h"
+#include <QSettings>
+#include <QDir>
 
 database_connection::database_connection() {
     db = QSqlDatabase::addDatabase("QMYSQL");
-    hostname = "123.56.154.190"; // 数据库主机名
-    dbname = "travel-system"; // 数据库名称
-    username = "travel-system-database";   // 数据库用户名
-    password = "Q2SWraFR3zKAP3bD"; // 数据库密码
+    QString configPath = QDir::currentPath() + "/config.ini";
+    qDebug() << "Config file path:" << configPath;
+    QSettings settings(configPath, QSettings::IniFormat);
+    QString hostname = settings.value("Database/hostname").toString();
+    QString dbname = settings.value("Database/dbname").toString();
+    QString username = settings.value("Database/username").toString();
+    QString password = settings.value("Database/password").toString();
     db.setHostName(hostname); // 设置主机名
     db.setDatabaseName(dbname); // 设置数据库名称
     db.setUserName(username); // 设置用户名
