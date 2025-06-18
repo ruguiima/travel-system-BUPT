@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>data/map.png</file>
+        <file>data/icon.png</file>
+    </qresource>
+    <qresource prefix="/json">
+        <file>data/map_of_bupt.geojson</file>
+    </qresource>
+</RCC>
