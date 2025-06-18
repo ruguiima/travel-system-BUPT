@@ -1,10 +1,4 @@
 # travel-system-BUPT
 ## 北邮2025年数据结构课程设计作业
 
-test文件夹下可编写单元测试文件，使用cmake链接编译，vscode和qt均支持cmake（，vscode下想编译可能需要配置一下cmake设置，qt下直接添加项目->选中cmakelists.txt就会自动识别），有调试需求可仿照我的cmakelists编写
-
-.vscode文件夹下有我已经填写好的include path，将qt位置更改为自己安装位置后即可正常使用代码提示
-
-为了避免文件冲突，之后我会将cmakelists和.vscode/添加到gitignore不再同步git，此次上传仅供参考配置。后续有想忽略的文件也可添加进gitignore
-
-在配置过qmake，cmake和vscode的json设置文件后，引用头文件时只需将include文件夹作为一级目录，与实际要引用头文件的文件位置无关系，在include的二级文件夹下就"文件夹名/文件名.h"
+此分支为开发版本，要查看项目介绍和可执行文件请切换到final分支
